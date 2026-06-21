@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador | El Toldo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><h2>EL TOLDO<span>.</span></h2></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="formulario.html">Nueva Reserva</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="admin-wrapper">
+        <section id="login-section" class="admin-card admin-login-card">
+            <h1>Acceso Administrador</h1>
+            <p>Ingresa con el usuario administrador creado en Firebase Authentication.</p>
+
+            <form id="form-login" class="admin-form">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="admin@correo.com" required>
+
+                <label>Contraseña</label>
+                <input type="password" name="password" placeholder="Contraseña" required>
+
+                <button type="submit" class="btn-primary admin-btn-full">Ingresar</button>
+                <p id="login-mensaje" class="admin-mensaje"></p>
+            </form>
+        </section>
+
+        <section id="panel-section" class="admin-panel" style="display:none;">
+            <div class="admin-panel-header">
+                <div>
+                    <h1>Panel de Reservas</h1>
+                    <p id="admin-usuario">Sesión activa</p>
+                </div>
+                <div class="admin-actions-top">
+                    <button id="btn-recargar" class="btn-secondary admin-btn-dark">Recargar</button>
+                    <button id="btn-salir" class="btn-primary">Cerrar sesión</button>
+                </div>
+            </div>
+
+            <div class="admin-card admin-filtros">
+                <input type="text" id="filtro-texto" placeholder="Buscar por nombre, email, teléfono o ID...">
+                <select id="filtro-estado">
+                    <option value="">Todos los estados</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="CONFIRMADA">Confirmada</option>
+                    <option value="ANULADA">Anulada</option>
+                </select>
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>PAX</th>
+                                <th>Menú</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-reservas">
+                            <tr><td colspan="7">Sin datos cargados.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="panel-mensaje" class="admin-mensaje"></p>
+            </div>
+        </section>
+
+        <section id="editor-section" class="admin-card admin-editor" style="display:none;">
+            <div class="admin-panel-header">
+                <div>
+                    <h2>Editar Reserva</h2>
+                    <p id="editor-id">Documento Firestore</p>
+                </div>
+                <button id="btn-cerrar-editor" class="btn-secondary admin-btn-dark">Cerrar</button>
+            </div>
+
+            <form id="form-editor" class="admin-form admin-form-grid">
+                <input type="hidden" name="firestore_id">
+
+                <div>
+                    <label>ID Gestión</label>
+                    <input type="text" name="id_gestion" readonly>
+                </div>
+
+                <div>
+                    <label>Estado</label>
+                    <select name="estado" required>
+                        <option value="PENDIENTE">PENDIENTE</option>
+                        <option value="CONFIRMADA">CONFIRMADA</option>
+                        <option value="ANULADA">ANULADA</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Nombre o Empresa</label>
+                    <input type="text" name="nombre" required>
+                </div>
+
+                <div>
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div>
+                    <label>Teléfono</label>
+                    <input type="tel" name="telefono" required>
+                </div>
+
+                <div>
+                    <label>Fecha del Evento</label>
+                    <input type="date" name="fecha" required>
+                </div>
+
+                <div>
+                    <label>Cantidad de Personas</label>
+                    <input type="number" name="pax" min="1" required>
+                </div>
+
+                <div>
+                    <label>Tipo de Menú</label>
+                    <select name="menu" required>
+                        <option value="matrimonio">Matrimonio (Premium)</option>
+                        <option value="corporativo">Corporativo (Estándar)</option>
+                        <option value="particular">Particular (Asado Tradicional)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Ambiente</label>
+                    <select name="ambiente" required>
+                        <option value="terraza">Terraza (Al aire libre)</option>
+                        <option value="interior">Salón Interior</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Respuesta / Nota Administrativa</label>
+                    <input type="text" name="respuesta_admin" placeholder="Ej: Confirmada, pendiente de pago de garantía">
+                </div>
+
+                <div class="admin-full-width">
+                    <label>Alergias, restricciones o mensaje adicional</label>
+                    <textarea name="comentario"></textarea>
+                </div>
+
+                <div class="admin-editor-actions admin-full-width">
+                    <button type="submit" class="btn-primary">Guardar Cambios</button>
+                    <button type="button" id="btn-eliminar" class="admin-btn-danger">Eliminar Reserva</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+<script>
+    const FIREBASE_CONFIG = {
+        apiKey: "AIzaSyDE1NqRYSoa1CQYlxlOkJywyFI6SqOSnY0",
+        projectId: "appeltoldo"
+    };
+
+    const FIRESTORE_DATABASE_IDS = ['(default)', 'default'];
+
+    let sesion = JSON.parse(localStorage.getItem('adminSesionElToldo') || 'null');
+    let reservas = [];
+    let databaseIdActivo = localStorage.getItem('firestoreDatabaseIdElToldo') || null;
+
+    const loginSection = document.getElementById('login-section');
+    const panelSection = document.getElementById('panel-section');
+    const editorSection = document.getElementById('editor-section');
+    const formLogin = document.getElementById('form-login');
+    const formEditor = document.getElementById('form-editor');
+    const tablaReservas = document.getElementById('tabla-reservas');
+    const panelMensaje = document.getElementById('panel-mensaje');
+    const loginMensaje = document.getElementById('login-mensaje');
+    const filtroTexto = document.getElementById('filtro-texto');
+    const filtroEstado = document.getElementById('filtro-estado');
+
+    function mostrarLogin() {
+        loginSection.style.display = 'block';
+        panelSection.style.display = 'none';
+        editorSection.style.display = 'none';
+    }
+
+    function mostrarPanel() {
+        loginSection.style.display = 'none';
+        panelSection.style.display = 'block';
+        document.getElementById('admin-usuario').innerText = 'Sesión activa: ' + (sesion?.email || 'administrador');
+    }
+
+    function setMensaje(elemento, texto, tipo = '') {
+        elemento.innerText = texto || '';
+        elemento.className = 'admin-mensaje ' + tipo;
+    }
+
+    function crearCampoFirestore(valor) {
+        if (typeof valor === 'number') {
+            return Number.isInteger(valor) ? { integerValue: String(valor) } : { doubleValue: valor };
+        }
+        if (typeof valor === 'boolean') return { booleanValue: valor };
+        return { stringValue: String(valor ?? '') };
+    }
+
+    function obtenerValorFirestore(campo) {
+        if (!campo) return '';
+        if (campo.stringValue !== undefined) return campo.stringValue;
+        if (campo.integerValue !== undefined) return Number(campo.integerValue);
+        if (campo.doubleValue !== undefined) return Number(campo.doubleValue);
+        if (campo.booleanValue !== undefined) return campo.booleanValue;
+        if (campo.timestampValue !== undefined) return campo.timestampValue;
+        return '';
+    }
+
+    function convertirDocumentoFirestore(documento) {
+        const fields = documento.fields || {};
+        const firestoreId = (documento.name || '').split('/').pop();
+        return {
+            firestore_id: firestoreId,
+            id_gestion: obtenerValorFirestore(fields.id_gestion),
+            nombre: obtenerValorFirestore(fields.nombre),
+            email: obtenerValorFirestore(fields.email),
+            telefono: obtenerValorFirestore(fields.telefono),
+            menu: obtenerValorFirestore(fields.menu),
+            fecha: obtenerValorFirestore(fields.fecha),
+            pax: obtenerValorFirestore(fields.pax),
+            ambiente: obtenerValorFirestore(fields.ambiente),
+            comentario: obtenerValorFirestore(fields.comentario),
+            estado: obtenerValorFirestore(fields.estado) || 'PENDIENTE',
+            respuesta_admin: obtenerValorFirestore(fields.respuesta_admin),
+            creado_en: obtenerValorFirestore(fields.creado_en),
+            actualizado_en: obtenerValorFirestore(fields.actualizado_en)
+        };
+    }
+
+    async function fetchConTimeout(url, opciones = {}, timeoutMs = 20000) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const response = await fetch(url, { ...opciones, signal: controller.signal });
+            const texto = await response.text();
+            let json = {};
+            try { json = texto ? JSON.parse(texto) : {}; } catch (e) { json = { raw: texto }; }
+            return { response, texto, json };
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
+
+    function headersAutorizados() {
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + sesion.idToken
+        };
+    }
+
+    function baseUrl(databaseId) {
+        return `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/${encodeURIComponent(databaseId)}/documents/reservas`;
+    }
+
+    async function ejecutarConBaseFirestore(callback) {
+        const ids = databaseIdActivo
+            ? [databaseIdActivo, ...FIRESTORE_DATABASE_IDS.filter(id => id !== databaseIdActivo)]
+            : FIRESTORE_DATABASE_IDS;
+
+        let ultimoError = null;
+
+        for (const databaseId of ids) {
+            try {
+                const resultado = await callback(databaseId);
+                databaseIdActivo = databaseId;
+                localStorage.setItem('firestoreDatabaseIdElToldo', databaseId);
+                return resultado;
+            } catch (error) {
+                ultimoError = error;
+                const mensaje = String(error.message || '').toLowerCase();
+                if (mensaje.includes('database') && mensaje.includes('does not exist')) {
+                    continue;
+                }
+                throw error;
+            }
+        }
+
+        throw ultimoError || new Error('No se pudo detectar la base de datos de Firestore.');
+    }
+
+    async function loginFirebase(email, password) {
+        const url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_CONFIG.apiKey}`;
+        const { response, json, texto } = await fetchConTimeout(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, returnSecureToken: true })
+        });
+
+        if (!response.ok) {
+            const detalle = json.error?.message || texto || 'No se pudo iniciar sesión.';
+            throw new Error(detalle);
+        }
+
+        return {
+            email: json.email,
+            idToken: json.idToken,
+            refreshToken: json.refreshToken,
+            localId: json.localId,
+            expiresAt: Date.now() + (Number(json.expiresIn || 3600) * 1000)
+        };
+    }
+
+    async function listarReservas() {
+        setMensaje(panelMensaje, 'Cargando reservas...');
+
+        const data = await ejecutarConBaseFirestore(async (databaseId) => {
+            const url = `${baseUrl(databaseId)}?pageSize=100&key=${FIREBASE_CONFIG.apiKey}`;
+            const { response, json, texto } = await fetchConTimeout(url, {
+                method: 'GET',
+                headers: headersAutorizados()
+            });
+
+            if (!response.ok) {
+                const detalle = json.error?.message || texto || 'Error desconocido';
+                throw new Error(`HTTP ${response.status}: ${detalle}`);
+            }
+
+            return json;
+        });
+
+        reservas = (data.documents || []).map(convertirDocumentoFirestore);
+        reservas.sort((a, b) => String(b.creado_en || '').localeCompare(String(a.creado_en || '')));
+        pintarTabla();
+        setMensaje(panelMensaje, reservas.length ? `Reservas cargadas: ${reservas.length}` : 'No hay reservas registradas.', 'ok');
+    }
+
+    function textoMenu(menu) {
+        if (menu === 'matrimonio') return 'Matrimonio';
+        if (menu === 'corporativo') return 'Corporativo';
+        if (menu === 'particular') return 'Particular';
+        return menu || 'No informado';
+    }
+
+    function estadoClase(estado) {
+        if (estado === 'CONFIRMADA') return 'estado-confirmada';
+        if (estado === 'ANULADA') return 'estado-anulada';
+        return 'estado-pendiente';
+    }
+
+    function escapeHtml(valor) {
+        return String(valor ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
+    }
+
+    function pintarTabla() {
+        const texto = filtroTexto.value.trim().toLowerCase();
+        const estado = filtroEstado.value;
+
+        const filtradas = reservas.filter(reserva => {
+            const bolsa = [
+                reserva.id_gestion,
+                reserva.nombre,
+                reserva.email,
+                reserva.telefono,
+                reserva.firestore_id,
+                reserva.menu,
+                reserva.ambiente
+            ].join(' ').toLowerCase();
+
+            const cumpleTexto = !texto || bolsa.includes(texto);
+            const cumpleEstado = !estado || reserva.estado === estado;
+            return cumpleTexto && cumpleEstado;
+        });
+
+        if (!filtradas.length) {
+            tablaReservas.innerHTML = '<tr><td colspan="7">No hay reservas que coincidan con el filtro.</td></tr>';
+            return;
+        }
+
+        tablaReservas.innerHTML = filtradas.map(reserva => `
+            <tr>
+                <td><strong>${escapeHtml(reserva.id_gestion || reserva.firestore_id)}</strong></td>
+                <td>
+                    ${escapeHtml(reserva.nombre)}<br>
+                    <small>${escapeHtml(reserva.email)} | ${escapeHtml(reserva.telefono)}</small>
+                </td>
+                <td>${escapeHtml(reserva.fecha)}</td>
+                <td>${escapeHtml(reserva.pax)}</td>
+                <td>${escapeHtml(textoMenu(reserva.menu))}</td>
+                <td><span class="admin-estado ${estadoClase(reserva.estado)}">${escapeHtml(reserva.estado)}</span></td>
+                <td>
+                    <button class="admin-btn-small" onclick="abrirEditor('${escapeHtml(reserva.firestore_id)}')">Editar</button>
+                    <a class="admin-link-small" href="comprobante.html?id=${encodeURIComponent(reserva.firestore_id)}" target="_blank">Ver</a>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    window.abrirEditor = function(firestoreId) {
+        const reserva = reservas.find(item => item.firestore_id === firestoreId);
+        if (!reserva) return;
+
+        formEditor.firestore_id.value = reserva.firestore_id;
+        formEditor.id_gestion.value = reserva.id_gestion || '';
+        formEditor.estado.value = reserva.estado || 'PENDIENTE';
+        formEditor.nombre.value = reserva.nombre || '';
+        formEditor.email.value = reserva.email || '';
+        formEditor.telefono.value = reserva.telefono || '';
+        formEditor.fecha.value = reserva.fecha || '';
+        formEditor.pax.value = reserva.pax || '';
+        formEditor.menu.value = reserva.menu || 'matrimonio';
+        formEditor.ambiente.value = reserva.ambiente || 'terraza';
+        formEditor.respuesta_admin.value = reserva.respuesta_admin || '';
+        formEditor.comentario.value = reserva.comentario || '';
+
+        document.getElementById('editor-id').innerText = 'Documento: ' + reserva.firestore_id;
+        editorSection.style.display = 'block';
+        editorSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    async function actualizarReserva(datos) {
+        const campos = {
+            id_gestion: crearCampoFirestore(datos.id_gestion),
+            nombre: crearCampoFirestore(datos.nombre),
+            email: crearCampoFirestore(datos.email),
+            telefono: crearCampoFirestore(datos.telefono),
+            menu: crearCampoFirestore(datos.menu),
+            fecha: crearCampoFirestore(datos.fecha),
+            pax: crearCampoFirestore(datos.pax),
+            ambiente: crearCampoFirestore(datos.ambiente),
+            comentario: crearCampoFirestore(datos.comentario),
+            estado: crearCampoFirestore(datos.estado),
+            respuesta_admin: crearCampoFirestore(datos.respuesta_admin),
+            actualizado_en: { timestampValue: new Date().toISOString() }
+        };
+
+        const updateMask = Object.keys(campos)
+            .map(campo => 'updateMask.fieldPaths=' + encodeURIComponent(campo))
+            .join('&');
+
+        await ejecutarConBaseFirestore(async (databaseId) => {
+            const url = `${baseUrl(databaseId)}/${encodeURIComponent(datos.firestore_id)}?key=${FIREBASE_CONFIG.apiKey}&${updateMask}`;
+            const { response, json, texto } = await fetchConTimeout(url, {
+                method: 'PATCH',
+                headers: headersAutorizados(),
+                body: JSON.stringify({ fields: campos })
+            });
+
+            if (!response.ok) {
+                const detalle = json.error?.message || texto || 'Error desconocido';
+                throw new Error(`HTTP ${response.status}: ${detalle}`);
+            }
+        });
+    }
+
+    async function eliminarReserva(firestoreId) {
+        await ejecutarConBaseFirestore(async (databaseId) => {
+            const url = `${baseUrl(databaseId)}/${encodeURIComponent(firestoreId)}?key=${FIREBASE_CONFIG.apiKey}`;
+            const { response, json, texto } = await fetchConTimeout(url, {
+                method: 'DELETE',
+                headers: headersAutorizados()
+            });
+
+            if (!response.ok) {
+                const detalle = json.error?.message || texto || 'Error desconocido';
+                throw new Error(`HTTP ${response.status}: ${detalle}`);
+            }
+        });
+    }
+
+    formLogin.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        setMensaje(loginMensaje, 'Validando usuario...');
+
+        try {
+            sesion = await loginFirebase(formLogin.email.value.trim(), formLogin.password.value);
+            localStorage.setItem('adminSesionElToldo', JSON.stringify(sesion));
+            mostrarPanel();
+            await listarReservas();
+        } catch (error) {
+            console.error(error);
+            setMensaje(loginMensaje, 'No se pudo iniciar sesión: ' + (error.message || 'Error desconocido'), 'error');
+        }
+    });
+
+    formEditor.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        setMensaje(panelMensaje, 'Guardando cambios...');
+
+        const datos = {
+            firestore_id: formEditor.firestore_id.value,
+            id_gestion: formEditor.id_gestion.value,
+            estado: formEditor.estado.value,
+            nombre: formEditor.nombre.value.trim(),
+            email: formEditor.email.value.trim(),
+            telefono: formEditor.telefono.value.trim(),
+            fecha: formEditor.fecha.value,
+            pax: Number(formEditor.pax.value),
+            menu: formEditor.menu.value,
+            ambiente: formEditor.ambiente.value,
+            respuesta_admin: formEditor.respuesta_admin.value.trim(),
+            comentario: formEditor.comentario.value.trim()
+        };
+
+        try {
+            await actualizarReserva(datos);
+            editorSection.style.display = 'none';
+            await listarReservas();
+            setMensaje(panelMensaje, 'Reserva actualizada correctamente.', 'ok');
+        } catch (error) {
+            console.error(error);
+            setMensaje(panelMensaje, 'No se pudo actualizar: ' + (error.message || 'Error desconocido'), 'error');
+        }
+    });
+
+    document.getElementById('btn-eliminar').addEventListener('click', async () => {
+        const firestoreId = formEditor.firestore_id.value;
+        if (!firestoreId) return;
+
+        const confirmar = confirm('¿Seguro que deseas eliminar esta reserva? Esta acción no se puede deshacer.');
+        if (!confirmar) return;
+
+        try {
+            setMensaje(panelMensaje, 'Eliminando reserva...');
+            await eliminarReserva(firestoreId);
+            editorSection.style.display = 'none';
+            await listarReservas();
+            setMensaje(panelMensaje, 'Reserva eliminada correctamente.', 'ok');
+        } catch (error) {
+            console.error(error);
+            setMensaje(panelMensaje, 'No se pudo eliminar: ' + (error.message || 'Error desconocido'), 'error');
+        }
+    });
+
+    document.getElementById('btn-cerrar-editor').addEventListener('click', () => {
+        editorSection.style.display = 'none';
+    });
+
+    document.getElementById('btn-recargar').addEventListener('click', listarReservas);
+
+    document.getElementById('btn-salir').addEventListener('click', () => {
+        localStorage.removeItem('adminSesionElToldo');
+        sesion = null;
+        reservas = [];
+        mostrarLogin();
+    });
+
+    filtroTexto.addEventListener('input', pintarTabla);
+    filtroEstado.addEventListener('change', pintarTabla);
+
+    if (sesion?.idToken && sesion.expiresAt > Date.now()) {
+        mostrarPanel();
+        listarReservas().catch(error => {
+            console.error(error);
+            setMensaje(panelMensaje, 'No se pudieron cargar las reservas: ' + (error.message || 'Error desconocido'), 'error');
+        });
+    } else {
+        localStorage.removeItem('adminSesionElToldo');
+        mostrarLogin();
+    }
+</script>
+</body>
+</html>

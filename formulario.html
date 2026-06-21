@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reservar Evento | El Toldo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><h2>EL TOLDO<span>.</span></h2></div>
+        <nav><ul><li><a href="index.html">Volver al Inicio</a></li></ul></nav>
+    </header>
+
+    <div class="contenedor-split">
+        <div class="split-img"></div>
+        
+        <div class="split-form">
+            <h2>RESERVAR / COTIZAR</h2>
+            
+            <form id="form-reserva">
+                <div class="form-grid">
+                    
+                    <div class="form-group">
+                        <label>Nombre o Empresa *</label>
+                        <input type="text" name="nombre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono *</label>
+                        <input type="tel" name="telefono" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipo de Menú *</label>
+                        <select name="menu" required>
+                            <option value="">Seleccione una opción</option>
+                            <option value="matrimonio">Matrimonio (Premium)</option>
+                            <option value="corporativo">Corporativo (Estándar)</option>
+                            <option value="particular">Particular (Asado Tradicional)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha del Evento *</label>
+                        <input type="date" name="fecha" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cantidad de Personas (PAX) *</label>
+                        <input type="number" name="pax" min="10" placeholder="Ej: 50" required>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Ambiente Deseado *</label>
+                        <select name="ambiente" required>
+                            <option value="terraza">Terraza (Al aire libre)</option>
+                            <option value="interior">Salón Interior</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Alergias, Restricciones o Mensaje Adicional</label>
+                        <textarea name="comentario" placeholder="Ej: 2 personas celíacas, 1 menú vegetariano..."></textarea>
+                    </div>
+
+                    <div class="form-group full-width" style="margin-top: 1rem;">
+                        <button type="submit" class="btn-primary" style="width: 100%; font-size: 1.2rem; padding: 15px;">Cotizar Reserva</button>
+                        <p id="mensaje-estado" style="margin-top: 10px; color: #ffcc99; display: none;"></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<script>
+    const FIREBASE_CONFIG = {
+        apiKey: "AIzaSyDE1NqRYSoa1CQYlxlOkJywyFI6SqOSnY0",
+        projectId: "appeltoldo"
+    };
+
+    const form = document.getElementById('form-reserva');
+    const mensajeEstado = document.getElementById('mensaje-estado');
+
+    function mostrarEstado(texto) {
+        mensajeEstado.innerText = texto;
+        mensajeEstado.style.display = 'block';
+    }
+
+    function crearCampoFirestore(valor) {
+        if (typeof valor === 'number') {
+            return Number.isInteger(valor)
+                ? { integerValue: String(valor) }
+                : { doubleValue: valor };
+        }
+
+        if (typeof valor === 'boolean') {
+            return { booleanValue: valor };
+        }
+
+        return { stringValue: String(valor ?? '') };
+    }
+
+    const FIRESTORE_DATABASE_IDS = ['(default)', 'default'];
+
+    async function enviarAFirestore(url, opciones, timeoutMs = 20000) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const response = await fetch(url, {
+                ...opciones,
+                signal: controller.signal
+            });
+
+            const respuestaTexto = await response.text();
+            let respuestaJson = {};
+
+            try {
+                respuestaJson = respuestaTexto ? JSON.parse(respuestaTexto) : {};
+            } catch (e) {
+                respuestaJson = { raw: respuestaTexto };
+            }
+
+            return { response, respuestaTexto, respuestaJson };
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
+
+    async function guardarReservaFirestore(datosReserva) {
+        const body = {
+            fields: {
+                id_gestion: crearCampoFirestore(datosReserva.id_gestion),
+                nombre: crearCampoFirestore(datosReserva.nombre),
+                email: crearCampoFirestore(datosReserva.email),
+                telefono: crearCampoFirestore(datosReserva.telefono),
+                menu: crearCampoFirestore(datosReserva.menu),
+                fecha: crearCampoFirestore(datosReserva.fecha),
+                pax: crearCampoFirestore(datosReserva.pax),
+                ambiente: crearCampoFirestore(datosReserva.ambiente),
+                comentario: crearCampoFirestore(datosReserva.comentario),
+                estado: crearCampoFirestore(datosReserva.estado),
+                creado_en: { timestampValue: new Date().toISOString() }
+            }
+        };
+
+        let ultimoError = null;
+
+        for (const databaseId of FIRESTORE_DATABASE_IDS) {
+            const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/${encodeURIComponent(databaseId)}/documents/reservas?key=${FIREBASE_CONFIG.apiKey}`;
+            mostrarEstado(`Conectando con Firebase / base ${databaseId}...`);
+
+            const { response, respuestaTexto, respuestaJson } = await enviarAFirestore(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                const nombreDocumento = respuestaJson.name || '';
+                const firestoreId = nombreDocumento.split('/').pop();
+
+                if (!firestoreId) {
+                    throw new Error('Firebase respondió, pero no entregó el ID del documento.');
+                }
+
+                return firestoreId;
+            }
+
+            const detalle = respuestaJson.error?.message || respuestaTexto || 'Error desconocido de Firebase';
+            ultimoError = new Error(`HTTP ${response.status}: ${detalle}`);
+
+            // Si falla porque ese ID de base no existe, probamos el siguiente ID.
+            if (response.status === 404 && detalle.toLowerCase().includes('database')) {
+                continue;
+            }
+
+            throw ultimoError;
+        }
+
+        throw new Error(
+            (ultimoError?.message || 'No se pudo conectar con Firestore.') +
+            '\n\nVerifica que la base de datos exista en Firebase y que el projectId/apiKey sean del mismo proyecto.'
+        );
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const btn = form.querySelector('button[type="submit"]');
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = 'Procesando respuesta...';
+        btn.disabled = true;
+        mostrarEstado('Conectando con Firebase...');
+
+        const idGestion = 'ET-' + Math.floor(1000 + Math.random() * 9000);
+
+        const datosReserva = {
+            id_gestion: idGestion,
+            nombre: form.nombre.value.trim(),
+            email: form.email.value.trim(),
+            telefono: form.telefono.value.trim(),
+            menu: form.menu.value,
+            fecha: form.fecha.value,
+            pax: Number(form.pax.value),
+            ambiente: form.ambiente.value,
+            comentario: form.comentario.value.trim(),
+            estado: 'PENDIENTE'
+        };
+
+        try {
+            const firestoreId = await guardarReservaFirestore(datosReserva);
+
+            const datosComprobante = {
+                ...datosReserva,
+                firestore_id: firestoreId,
+                creado_en: new Date().toISOString()
+            };
+
+            localStorage.setItem('reservaActual', JSON.stringify(datosComprobante));
+            mostrarEstado('Reserva guardada correctamente. Redirigiendo al comprobante...');
+
+            window.location.href = 'comprobante.html?id=' + encodeURIComponent(firestoreId);
+        } catch (error) {
+            console.error('Error al guardar en Firebase:', error);
+
+            let mensaje = error.message || 'Error desconocido';
+
+            if (error.name === 'AbortError') {
+                mensaje = 'La conexión con Firebase demoró más de 20 segundos. Desactiva VPN, bloqueador de anuncios o prueba con Google Chrome.';
+            }
+
+            alert(
+                'No se pudo guardar la reserva en Firebase.\n\n' +
+                mensaje + '\n\n' +
+                'Revisa también las reglas de Firestore.'
+            );
+
+            mostrarEstado('No se pudo conectar con Firebase. Revisa la consola o prueba sin VPN/bloqueador.');
+            btn.innerHTML = textoOriginal;
+            btn.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>

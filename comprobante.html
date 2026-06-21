@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resumen de Reserva | El Toldo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><h2>EL TOLDO<span>.</span></h2></div>
+        <nav><ul><li><a href="index.html">Volver al Inicio</a></li></ul></nav>
+    </header>
+
+    <div class="ticket-wrapper">
+        <div class="ticket">
+            <div class="ticket-header">
+                <h1>COMPROBANTE DE GESTIÓN</h1>
+                <p>ID de Reserva: <strong id="ticket-id">ET-0000</strong></p>
+                <div class="badge-estado">Estado: <span id="ticket-estado">PENDIENTE DE CONFIRMACIÓN</span></div>
+            </div>
+            
+            <div class="ticket-body">
+                <p><strong>A nombre de:</strong> <span id="ticket-nombre">Cargando...</span></p>
+                <p><strong>Contacto:</strong> <span id="ticket-contacto">Cargando...</span></p>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+                
+                <p><strong>Tipo de Evento:</strong> <span id="ticket-menu">Cargando...</span></p>
+                <p><strong>Fecha Programada:</strong> <span id="ticket-fecha">Cargando...</span></p>
+                <p><strong>Ambiente Asignado:</strong> <span id="ticket-ambiente">Cargando...</span></p>
+                <p><strong>Volumen de Comensales (PAX):</strong> <span id="ticket-pax">0</span></p>
+                
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+                
+                <p><strong>Tus notas de Salud / Alergias:</strong></p>
+                <p style="background: #f9f9f9; padding: 10px; border-left: 3px solid var(--color-primario); font-style: italic;" id="ticket-notas">
+                    "Sin comentarios"
+                </p>
+
+                <p style="margin-top: 20px;"><strong>Respuesta de El Toldo:</strong></p>
+                <p style="background: #eef8f1; padding: 10px; border-left: 3px solid #2ecc71; color: #27ae60;">
+                    <em>Tu solicitud ha sido recibida por nuestro motor logístico. En breve, el administrador confirmará tu reserva y te contactaremos para el pago de garantía.</em>
+                </p>
+            </div>
+
+            <div class="ticket-footer">
+                <p>Presenta este ID a nuestro anfitrión al llegar al local.</p>
+                <br>
+                <button onclick="window.print()" class="btn-secondary" style="color: #000; border-color: #000;">
+                    <i class="fa-solid fa-print"></i> Imprimir Respaldo
+                </button>
+                <a href="index.html" class="btn-primary" style="margin-left: 10px;">Volver al Inicio</a>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const FIREBASE_CONFIG = {
+        apiKey: "AIzaSyDE1NqRYSoa1CQYlxlOkJywyFI6SqOSnY0",
+        projectId: "appeltoldo"
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const firestoreId = params.get('id');
+
+    function obtenerValorFirestore(campo) {
+        if (!campo) return '';
+        if (campo.stringValue !== undefined) return campo.stringValue;
+        if (campo.integerValue !== undefined) return Number(campo.integerValue);
+        if (campo.doubleValue !== undefined) return Number(campo.doubleValue);
+        if (campo.booleanValue !== undefined) return campo.booleanValue;
+        if (campo.timestampValue !== undefined) return campo.timestampValue;
+        return '';
+    }
+
+    function convertirDocumentoFirestore(documento) {
+        const fields = documento.fields || {};
+        return {
+            firestore_id: firestoreId,
+            id_gestion: obtenerValorFirestore(fields.id_gestion),
+            nombre: obtenerValorFirestore(fields.nombre),
+            email: obtenerValorFirestore(fields.email),
+            telefono: obtenerValorFirestore(fields.telefono),
+            menu: obtenerValorFirestore(fields.menu),
+            fecha: obtenerValorFirestore(fields.fecha),
+            pax: obtenerValorFirestore(fields.pax),
+            ambiente: obtenerValorFirestore(fields.ambiente),
+            comentario: obtenerValorFirestore(fields.comentario),
+            estado: obtenerValorFirestore(fields.estado),
+            creado_en: obtenerValorFirestore(fields.creado_en)
+        };
+    }
+
+    const FIRESTORE_DATABASE_IDS = ['(default)', 'default'];
+
+    async function leerDesdeFirestore(url, timeoutMs = 15000) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                signal: controller.signal
+            });
+
+            const respuestaTexto = await response.text();
+            let respuestaJson = {};
+
+            try {
+                respuestaJson = respuestaTexto ? JSON.parse(respuestaTexto) : {};
+            } catch (e) {
+                respuestaJson = { raw: respuestaTexto };
+            }
+
+            return { response, respuestaTexto, respuestaJson };
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
+
+    async function consultarReservaFirestore(id) {
+        let ultimoError = null;
+
+        for (const databaseId of FIRESTORE_DATABASE_IDS) {
+            const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_CONFIG.projectId}/databases/${encodeURIComponent(databaseId)}/documents/reservas/${encodeURIComponent(id)}?key=${FIREBASE_CONFIG.apiKey}`;
+
+            const { response, respuestaTexto, respuestaJson } = await leerDesdeFirestore(url);
+
+            if (response.ok) {
+                return convertirDocumentoFirestore(respuestaJson);
+            }
+
+            const detalle = respuestaJson.error?.message || respuestaTexto || 'Error desconocido de Firebase';
+            ultimoError = new Error(`HTTP ${response.status}: ${detalle}`);
+
+            if (response.status === 404 && detalle.toLowerCase().includes('database')) {
+                continue;
+            }
+
+            throw ultimoError;
+        }
+
+        throw new Error(
+            (ultimoError?.message || 'No se pudo consultar Firestore.') +
+            '\n\nVerifica que la base de datos exista en Firebase y que el projectId/apiKey sean del mismo proyecto.'
+        );
+    }
+
+    function textoMenu(menu) {
+        if (menu === 'matrimonio') return 'Matrimonio (Premium)';
+        if (menu === 'corporativo') return 'Corporativo (Estándar)';
+        if (menu === 'particular') return 'Particular (Asado Tradicional)';
+        return menu || 'No informado';
+    }
+
+    function textoAmbiente(ambiente) {
+        if (!ambiente) return 'No informado';
+        if (ambiente === 'terraza') return 'Terraza (Al aire libre)';
+        if (ambiente === 'interior') return 'Salón Interior';
+        return ambiente.charAt(0).toUpperCase() + ambiente.slice(1);
+    }
+
+    function pintarComprobante(datos) {
+        document.getElementById('ticket-id').innerText = datos.id_gestion || firestoreId || 'ET-0000';
+        document.getElementById('ticket-estado').innerText = datos.estado || 'PENDIENTE DE CONFIRMACIÓN';
+        document.getElementById('ticket-nombre').innerText = datos.nombre || 'No informado';
+        document.getElementById('ticket-contacto').innerText = (datos.email || 'Sin email') + ' | ' + (datos.telefono || 'Sin teléfono');
+        document.getElementById('ticket-menu').innerText = textoMenu(datos.menu);
+        document.getElementById('ticket-fecha').innerText = datos.fecha || 'No informada';
+        document.getElementById('ticket-ambiente').innerText = textoAmbiente(datos.ambiente);
+        document.getElementById('ticket-pax').innerText = (datos.pax || 0) + ' Personas';
+        document.getElementById('ticket-notas').innerText = datos.comentario && datos.comentario.trim() !== '' ? '"' + datos.comentario + '"' : '"Sin comentarios"';
+    }
+
+    async function cargarComprobante() {
+        try {
+            if (firestoreId) {
+                const datos = await consultarReservaFirestore(firestoreId);
+                localStorage.setItem('reservaActual', JSON.stringify(datos));
+                pintarComprobante(datos);
+                return;
+            }
+
+            const reservaLocal = localStorage.getItem('reservaActual');
+            if (reservaLocal) {
+                pintarComprobante(JSON.parse(reservaLocal));
+                return;
+            }
+
+            document.getElementById('ticket-nombre').innerText = 'No se encontraron datos de la reserva.';
+            document.getElementById('ticket-contacto').innerText = 'Vuelve a realizar la cotización.';
+        } catch (error) {
+            console.error('Error al cargar comprobante:', error);
+
+            const reservaLocal = localStorage.getItem('reservaActual');
+            if (reservaLocal) {
+                pintarComprobante(JSON.parse(reservaLocal));
+                return;
+            }
+
+            alert('No se pudo consultar el comprobante en Firebase.\n\n' + (error.message || 'Error desconocido'));
+        }
+    }
+
+    cargarComprobante();
+</script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+/* VARIABLES DE COLOR - Estilo Rústico Elegante */
+:root {
+    --color-fondo: #121212; /* Negro carbón */
+    --color-texto: #f4f1ea; /* Blanco humo/pergamino */
+    --color-primario: #d35400; /* Naranja brasa/fuego */
+    --color-secundario: #2c3e50; /* Gris azulado oscuro */
+    --color-tarjetas: #1e1e1e;
+    --fuente-titulos: 'Playfair Display', serif; /* Elegante para títulos */
+    --fuente-texto: 'Inter', sans-serif; /* Limpia para lectura */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: var(--fuente-texto);
+    line-height: 1.6;
+}
+
+/* NAVEGACIÓN */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    background-color: rgba(18, 18, 18, 0.95);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #333;
+}
+
+.logo h2 {
+    font-family: var(--fuente-titulos);
+    font-size: 2rem;
+    letter-spacing: 2px;
+}
+
+.logo span {
+    color: var(--color-primario);
+}
+
+.navbar nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+}
+
+.navbar nav ul li a {
+    color: var(--color-texto);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.navbar nav ul li a:hover, .navbar nav ul li a.active {
+    color: var(--color-primario);
+}
+
+/* BOTONES */
+.btn-reserva, .btn-primary {
+    background-color: var(--color-primario);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-reserva:hover, .btn-primary:hover {
+    background-color: #a84300;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-texto);
+    border: 2px solid var(--color-texto);
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+/* HERO SECTION */
+.hero {
+    height: 100vh;
+    /* Usa un link real de imagen de asado o parrilla para tu proyecto */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-top: 80px;
+}
+
+.hero-content h1 {
+    font-family: var(--fuente-titulos);
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* PROPUESTA DE VALOR */
+.propuesta-valor {
+    padding: 5rem 5%;
+    background-color: #1a1a1a;
+}
+
+.contenedor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    text-align: center;
+}
+
+.card-valor {
+    background-color: var(--color-tarjetas);
+    padding: 2rem;
+    border-radius: 8px;
+    border-bottom: 3px solid var(--color-primario);
+    transition: transform 0.3s;
+}
+
+.card-valor:hover {
+    transform: translateY(-10px);
+}
+
+.card-valor i {
+    font-size: 2.5rem;
+    color: var(--color-primario);
+    margin-bottom: 1rem;
+}
+
+/* SERVICIOS */
+.servicios {
+    padding: 5rem 5%;
+}
+
+.seccion-titulo {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.seccion-titulo h2 {
+    font-family: var(--fuente-titulos);
+    font-size: 2.5rem;
+    color: var(--color-primario);
+}
+
+.contenedor-servicios {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.servicio-item {
+    background-color: var(--color-tarjetas);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Imágenes de placeholder para los servicios (cámbialas por tus fotos) */
+.img-servicio {
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+}
+.img-privado { background-image: url('https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); }
+.img-boda { background-image: url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); }
+.img-empresa { background-image: url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'); }
+
+.info-servicio {
+    padding: 2rem;
+}
+
+.info-servicio h3 {
+    margin-bottom: 1rem;
+    font-family: var(--fuente-titulos);
+    font-size: 1.5rem;
+}
+
+.btn-link {
+    color: var(--color-primario);
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 1rem;
+}
+
+/* FOOTER */
+footer {
+    background-color: #0a0a0a;
+    padding: 4rem 5% 1rem;
+    border-top: 1px solid #333;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.footer-contacto p {
+    margin-bottom: 0.5rem;
+}
+
+.footer-contacto i {
+    color: var(--color-primario);
+    margin-right: 10px;
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #333;
+    padding-top: 1rem;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* VARIABLES DE COLOR */
+:root {
+    --color-fondo: #121212;
+    --color-texto: #f4f1ea;
+    --color-primario: #d35400; /* Naranja fuego */
+    --color-tarjetas: #1e1e1e;
+    --fuente-titulos: 'Playfair Display', serif;
+    --fuente-texto: 'Inter', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background-color: var(--color-fondo);
+    color: var(--color-texto);
+    font-family: var(--fuente-texto);
+    line-height: 1.6;
+}
+
+/* Estilo del index */
+
+---------------------------------------------------------
+
+/* NAVEGACIÓN */
+.navbar {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 5%; background-color: rgba(18, 18, 18, 0.95);
+    position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid #333;
+}
+.logo h2 { font-family: var(--fuente-titulos); font-size: 2rem; letter-spacing: 2px; }
+.logo span { color: var(--color-primario); }
+.navbar nav ul { list-style: none; display: flex; gap: 2rem; }
+.navbar nav ul li a { color: var(--color-texto); text-decoration: none; transition: 0.3s; }
+.navbar nav ul li a:hover, .navbar nav ul li a.active { color: var(--color-primario); }
+
+/* BOTONES */
+.btn-primary, .btn-reserva {
+    background-color: var(--color-primario); color: #fff; padding: 10px 20px;
+    border-radius: 5px; text-decoration: none; font-weight: bold; transition: 0.3s;
+}
+.btn-primary:hover, .btn-reserva:hover { background-color: #a84300; }
+.btn-wsp { background-color: #25D366; color: #fff; padding: 15px 30px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 1.2rem; display: inline-block; margin-top: 20px;}
+.btn-wsp:hover { background-color: #1ebe57; }
+
+/* CABECERAS INTERNAS (Páginas secundarias) */
+.header-interno { padding: 150px 5% 50px; text-align: center; background-color: #1a1a1a; border-bottom: 1px solid #333; }
+.header-interno h1 { font-family: var(--fuente-titulos); font-size: 3rem; color: var(--color-primario); }
+
+/* GRID DE SERVICIOS Y VALOR */
+.contenedor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 4rem 5%; }
+.card { background-color: var(--color-tarjetas); border-radius: 8px; padding: 2rem; text-align: center; border-bottom: 3px solid var(--color-primario); }
+.card img { width: 100%; height: 250px; object-fit: cover; border-radius: 5px; margin-bottom: 1rem; }
+.card h3 { font-family: var(--fuente-titulos); font-size: 1.5rem; margin-bottom: 1rem; }
+
+/* NOSOTROS */
+.nosotros-seccion { display: flex; flex-wrap: wrap; align-items: center; gap: 3rem; padding: 5rem 5%; }
+.nosotros-texto { flex: 1; min-width: 300px; }
+.nosotros-texto h2 { font-family: var(--fuente-titulos); font-size: 2.5rem; color: var(--color-primario); margin-bottom: 1rem; }
+.nosotros-img { flex: 1; min-width: 300px; border-radius: 10px; overflow: hidden; }
+.nosotros-img img { width: 100%; display: block; }
+
+/* GALERÍA */
+.galeria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; padding: 2rem 5% 5rem; }
+.galeria-item { position: relative; overflow: hidden; border-radius: 8px; height: 300px; }
+.galeria-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.galeria-item:hover img { transform: scale(1.1); }
+.galeria-capa { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); padding: 1rem; text-align: center; transform: translateY(100%); transition: 0.3s; }
+.galeria-item:hover .galeria-capa { transform: translateY(0); }
+
+/* CONTACTO */
+.contacto-container { text-align: center; padding: 5rem 5%; }
+.contacto-opciones { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; margin-top: 3rem; }
+.contacto-box { background: var(--color-tarjetas); padding: 3rem; border-radius: 8px; width: 100%; max-width: 400px; }
+
+/* FOOTER */
+footer { background-color: #0a0a0a; padding: 3rem 5% 1rem; text-align: center; border-top: 1px solid #333; }
+
+------------------------------------------------------------------------------
+/* =========================================
+   DISEÑO VISTA RESERVA (Inspirado en la foto)
+   ========================================= */
+.contenedor-split {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 100vh;
+    padding-top: 80px; /* Espacio para el navbar */
+    background-color: #000; /* Fondo ultra oscuro como en la foto */
+}
+
+.split-img {
+    flex: 1;
+    min-width: 300px;
+    background: url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1000&q=80') center/cover no-repeat;
+}
+
+.split-form {
+    flex: 1;
+    min-width: 300px;
+    padding: 4rem 5%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.split-form h2 {
+    font-family: var(--fuente-titulos);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: span 2;
+}
+
+.form-group label {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    padding: 12px;
+    border: none;
+    background-color: #fff;
+    color: #000;
+    font-family: var(--fuente-texto);
+    border-radius: 2px;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* =========================================
+   DISEÑO VISTA COMPROBANTE FINAL (Ticket)
+   ========================================= */
+.ticket-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 100px 5%;
+    background-color: var(--color-fondo);
+}
+
+.ticket {
+    background-color: #fff;
+    color: #000;
+    width: 100%;
+    max-width: 600px;
+    padding: 3rem;
+    border-radius: 8px;
+    position: relative;
+    border: 1px dashed #ccc;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.ticket-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #000;
+    padding-bottom: 1rem;
+}
+
+.ticket-header h1 {
+    font-family: var(--fuente-titulos);
+    font-size: 2rem;
+    color: #000;
+}
+
+.ticket-body p {
+    margin-bottom: 0.8rem;
+    font-size: 1.1rem;
+}
+
+.ticket-body strong {
+    color: var(--color-primario);
+}
+
+.ticket-footer {
+    margin-top: 2rem;
+    text-align: center;
+    border-top: 1px dashed #ccc;
+    padding-top: 2rem;
+}
+
+.badge-estado {
+    display: inline-block;
+    padding: 5px 15px;
+    background-color: #f1c40f; /* Amarillo para Pendiente */
+    color: #000;
+    font-weight: bold;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+/* =========================================
+   PANEL ADMINISTRADOR
+   ========================================= */
+.admin-wrapper {
+    min-height: 100vh;
+    padding: 120px 5% 60px;
+    background: var(--color-fondo);
+}
+
+.admin-card {
+    background: var(--color-tarjetas);
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+.admin-login-card {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+.admin-login-card h1,
+.admin-panel h1,
+.admin-editor h2 {
+    font-family: var(--fuente-titulos);
+    color: var(--color-primario);
+    margin-bottom: 0.5rem;
+}
+
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.admin-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.admin-form-grid > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.admin-full-width {
+    grid-column: 1 / -1;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea,
+.admin-filtros input,
+.admin-filtros select {
+    padding: 12px;
+    border: none;
+    border-radius: 4px;
+    background: #fff;
+    color: #000;
+    font-family: var(--fuente-texto);
+}
+
+.admin-form textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.admin-btn-full {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+}
+
+.admin-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.admin-actions-top,
+.admin-editor-actions {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.admin-btn-dark {
+    color: var(--color-texto);
+    border-color: var(--color-texto);
+    background: transparent;
+    cursor: pointer;
+}
+
+.admin-filtros {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 1rem;
+}
+
+.admin-table-wrapper {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--color-texto);
+}
+
+.admin-table th,
+.admin-table td {
+    border-bottom: 1px solid #333;
+    padding: 12px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.admin-table th {
+    color: var(--color-primario);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.admin-table small {
+    color: #bbb;
+}
+
+.admin-estado {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #000;
+}
+
+.estado-pendiente { background: #f1c40f; }
+.estado-confirmada { background: #2ecc71; }
+.estado-anulada { background: #e74c3c; color: #fff; }
+
+.admin-btn-small,
+.admin-link-small,
+.admin-btn-danger {
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px;
+}
+
+.admin-btn-small {
+    background: var(--color-primario);
+    color: #fff;
+}
+
+.admin-link-small {
+    background: #333;
+    color: #fff;
+}
+
+.admin-btn-danger {
+    background: #c0392b;
+    color: #fff;
+}
+
+.admin-mensaje {
+    margin-top: 1rem;
+    color: #ffcc99;
+}
+
+.admin-mensaje.ok { color: #2ecc71; }
+.admin-mensaje.error { color: #ff7675; }
+
+@media (max-width: 760px) {
+    .admin-panel-header,
+    .admin-filtros,
+    .admin-form-grid {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .admin-wrapper {
+        padding-top: 110px;
+    }
+}
