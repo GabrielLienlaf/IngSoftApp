@@ -1,0 +1,68 @@
+# Sistema Web de Reservas - El Toldo
+
+## Descripción del proyecto
+
+El Toldo es un sistema web desarrollado para una banquetería de asados, cuyo objetivo es digitalizar el proceso de solicitud y gestión de reservas de eventos.
+
+La aplicación permite que un cliente revise información del servicio, complete un formulario de reserva y visualice un comprobante con los datos ingresados. Además, contempla un panel administrador para consultar, filtrar y actualizar reservas recibidas.
+
+## Tecnologías utilizadas
+
+* HTML5
+* CSS3
+* JavaScript Vanilla
+* Firebase Cloud Firestore
+* Firebase Authentication
+* Firebase REST API
+* localStorage
+* Live Server
+* Git y GitHub
+
+## Funcionalidades principales
+
+* Página de inicio del sitio web.
+* Sección de servicios.
+* Sección nosotros.
+* Galería de imágenes.
+* Página de contacto.
+* Formulario de solicitud de reserva.
+* Registro de reservas en Cloud Firestore.
+* Generación de comprobante de reserva.
+* Panel administrador para consultar y actualizar reservas.
+* Respaldo local mediante localStorage en caso de contingencia de conexión.
+
+## Estructura del proyecto
+
+```txt
+el-toldo/
+│
+├── index.html
+├── servicios.html
+├── nosotros.html
+├── galeria.html
+├── contacto.html
+├── formulario.html
+├── comprobante.html
+├── admin.html
+├── style.css
+└── README.md
+```
+
+## Casos de uso principales
+
+* CU-001: Registrar solicitud de reserva de asado.
+* CU-002: Visualizar comprobante de reserva.
+* CU-003: Gestionar reservas en panel administrador.
+
+## Estado del proyecto
+
+El proyecto se encuentra en etapa de avance funcional para Sprint Review. Actualmente se encuentran desarrolladas las vistas principales, el formulario de reserva, la conexión con Firestore, el comprobante y una propuesta de panel administrador.
+
+## Mejoras futuras
+
+* Incorporar eliminación segura de reservas.
+* Agregar notificaciones por correo.
+* Implementar calendario de disponibilidad.
+* Exportar reservas a Excel o PDF.
+* Mejorar roles administrativos.
+* Desplegar en hosting productivo.
