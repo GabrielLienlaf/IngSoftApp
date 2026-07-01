@@ -1,0 +1,14 @@
+Menu de carne cortes entre filete o asiento escoger entre uno de las dos opciones ,de acompñamiento se puede escojer entre porcion de arroz, pure o papas doradas, mas
+una ensalada surtida individual, de aperivo una copa de vino y jugo natural o bebida y un postre individual.
+
+
+Menu pollo carne, cortes entre filete, asiento o lomo liso una vez que se escoja entre los cortes de carne se escoje una presa de pollo que puede ser entre pechuga
+o truto, de acompñamiento se puede escojer entre porcion de arroz, pure o papas doradas, mas una ensalada surtida individual, de aperivo una copa de vino y jugo natural
+o bebida y un postre individual.
+
+Menu de cerdo carne, cortes entre filete, asiento, lomo liso o lomo vetado una vez que se escoja entre los cortes de carne se escoje una parte del cerdo puede ser 
+costillar o porcion de pechugas, de acompñamiento se puede escojer entre porcion de arroz, pure o papas doradas, mas una ensalada surtida individual, de aperivo una 
+copa de vino y jugo natural o bebida y un postre individual.
+
+Menu marino, pescados entre reineta, merluza y salmón, de acompñamiento se puede escojer entre porcion de arroz, pure o papas doradas, mas una ensalada surtida o 
+ensalda chilena individual, de aperivo una copa de vino y jugo natural o bebida y un postre individual. 

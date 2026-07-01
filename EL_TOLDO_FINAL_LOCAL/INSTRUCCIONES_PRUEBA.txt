@@ -1,0 +1,21 @@
+EL TOLDO - VERSION FINAL LOCAL SIN FIREBASE
+
+IMPORTANTE:
+Esta version NO consulta Firestore para el panel administrador.
+El motor logico usa los datos ingresados en formulario.html y los guarda en localStorage.
+
+Pasos para probar:
+1) Cerrar todas las pestañas antiguas del navegador.
+2) En VS Code: Archivo > Abrir carpeta > seleccionar exactamente la carpeta EL_TOLDO_FINAL_LOCAL.
+3) Abrir formulario.html con Live Server.
+4) Crear una reserva de matrimonio completa.
+5) Luego abrir admin.html con Live Server desde la MISMA carpeta y MISMO navegador.
+6) Login demo:
+   Correo: admin@eltoldo.cl
+   Contraseña: Admin123456
+7) Presionar Recargar.
+8) Presionar Gestionar en la reserva.
+9) Ver seccion Calculo interno de suministros, maestro parrillero y maestro cocina.
+
+Si en consola aparece firestore.googleapis.com, estas usando una carpeta antigua.
+En esta version no debe aparecer ninguna llamada a Firestore desde admin.html.

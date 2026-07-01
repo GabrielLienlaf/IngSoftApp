@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva Matrimonio | El Toldo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><h2>EL TOLDO<span>.</span></h2></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="servicios.html">Menús</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="reserva-matrimonio-wrapper">
+        <section class="reserva-hero-card">
+            <span class="etiqueta-seccion">Reserva especializada</span>
+            <h1>Configura el menú de tu matrimonio</h1>
+            <p>
+                Completa los datos del evento y selecciona uno de nuestros cuatro menús. Guarda el comprobante para tu tranquilidad. El administrador usará esta misma información de la encuesta para calcular internamente los suministros del evento.
+            </p>
+        </section>
+
+        <section class="formulario-matrimonio-card">
+            <form id="form-reserva">
+                <h2>Datos del matrimonio</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nombre del cliente *</label>
+                        <input type="text" name="nombre" placeholder="Ej: Gonzalo Puyol" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" name="email" placeholder="cliente@correo.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono *</label>
+                        <input type="tel" name="telefono" placeholder="Ej: 912345678" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha del matrimonio *</label>
+                        <input type="date" name="fecha" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total de invitados *</label>
+                        <input type="number" name="total_invitados" min="1" placeholder="Ej: 120" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cantidad de niños *</label>
+                        <input type="number" name="cantidad_ninos" min="0" value="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Adultos calculados</label>
+                        <input type="number" name="cantidad_adultos" readonly value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ambiente solicitado *</label>
+                        <select name="ambiente" required>
+                            <option value="salon_principal">Salón principal</option>
+                            <option value="terraza">Terraza al aire libre</option>
+                            <option value="salon_terraza">Salón + terraza</option>
+                        </select>
+                    </div>
+                </div>
+
+                <h2>Selección del menú</h2>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Menú de matrimonio *</label>
+                        <select name="menu_tipo" id="menu_tipo" required>
+                            <option value="carne">Menú Carne</option>
+                            <option value="pollo_carne">Menú Pollo Carne</option>
+                            <option value="cerdo_carne">Menú Cerdo Carne</option>
+                            <option value="marino">Menú Marino</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group campo-menu" id="grupo_corte_carne">
+                        <label>Corte de carne *</label>
+                        <select name="corte_carne" id="corte_carne"></select>
+                    </div>
+
+                    <div class="form-group campo-menu" id="grupo_presa_pollo">
+                        <label>Presa de pollo *</label>
+                        <select name="presa_pollo" id="presa_pollo">
+                            <option value="pechuga">Pechuga</option>
+                            <option value="truto">Truto</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group campo-menu" id="grupo_corte_cerdo">
+                        <label>Opción de cerdo *</label>
+                        <select name="corte_cerdo" id="corte_cerdo">
+                            <option value="costillar">Costillar</option>
+                            <option value="porcion de chuletas">Porción de chuletas</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group campo-menu" id="grupo_pescado">
+                        <label>Tipo de pescado *</label>
+                        <select name="pescado" id="pescado">
+                            <option value="reineta">Reineta</option>
+                            <option value="merluza">Merluza</option>
+                            <option value="salmon">Salmón</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Acompañamiento *</label>
+                        <select name="acompanamiento" required>
+                            <option value="arroz">Porción de arroz</option>
+                            <option value="pure">Puré</option>
+                            <option value="papas_doradas">Papas doradas</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ensalada *</label>
+                        <select name="ensalada" id="ensalada" required></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Bebestible *</label>
+                        <select name="bebestible" id="bebestible" required>
+                            <option value="bebida">Bebida</option>
+                            <option value="jugo_natural">Jugo natural</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="grupo_fruta_jugo">
+                        <label>Fruta del jugo natural *</label>
+                        <select name="fruta_jugo" id="fruta_jugo">
+                            <option value="pina">Piña</option>
+                            <option value="frutilla">Frutilla</option>
+                            <option value="frambuesa">Frambuesa</option>
+                            <option value="maracuya">Maracuyá</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Alergias, restricciones u observaciones</label>
+                        <textarea name="comentario" placeholder="Ej: invitados celíacos, sin lactosa, adulto mayor, horarios especiales, etc."></textarea>
+                    </div>
+                </div>
+
+                <div class="preview-menu-cliente">
+                    <h3>Detalle del menú seleccionado</h3>
+                    <p>Este es el resumen que verá el cliente en su comprobante.</p>
+                    <ul id="detalle-menu-cliente"></ul>
+                    <p class="nota-interna">Nota interna: el cálculo de suministros no se muestra al cliente. Solo lo revisa el administrador.</p>
+                </div>
+
+                <div class="form-group full-width" style="margin-top: 1.5rem;">
+                    <button type="submit" class="btn-primary btn-full-grande">Registrar reserva de matrimonio</button>
+                    <p id="mensaje-estado" class="estado-formulario" style="display:none;"></p>
+                </div>
+            </form>
+        </section>
+    </main>
+
+
+<script>
+
+    const textos = {
+        carne: 'Menú Carne',
+        pollo_carne: 'Menú Pollo Carne',
+        cerdo_carne: 'Menú Cerdo Carne',
+        marino: 'Menú Marino',
+        filete: 'Filete',
+        asiento: 'Asiento',
+        lomo_liso: 'Lomo liso',
+        lomo_vetado: 'Lomo vetado',
+        pechuga: 'Pechuga',
+        truto: 'Truto',
+        costillar: 'Costillar',
+        porcion_pechuga: 'Porción de pechuga',
+        porcion_chuletas: 'Porción de chuletas',
+        reineta: 'Reineta',
+        merluza: 'Merluza',
+        salmon: 'Salmón',
+        arroz: 'Porción de arroz',
+        pure: 'Puré',
+        papas_doradas: 'Papas doradas',
+        surtida: 'Ensalada surtida individual',
+        chilena: 'Ensalada chilena individual',
+        bebida: 'Bebida',
+        jugo_natural: 'Jugo natural',
+        pina: 'Piña',
+        frutilla: 'Frutilla',
+        frambuesa: 'Frambuesa',
+        maracuya: 'Maracuyá',
+        salon_principal: 'Salón principal',
+        terraza: 'Terraza al aire libre',
+        salon_terraza: 'Salón + terraza'
+    };
+
+    function txt(valor) {
+        return textos[valor] || valor || 'No informado';
+    }
+
+    function escapeHtml(valor) {
+        return String(valor ?? '').replace(/[&<>'"]/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[c]));
+    }
+
+    function generarIdReserva() {
+        const fecha = new Date();
+        const y = fecha.getFullYear();
+        const m = String(fecha.getMonth() + 1).padStart(2, '0');
+        const d = String(fecha.getDate()).padStart(2, '0');
+        const random = Math.floor(1000 + Math.random() * 9000);
+        return `ET-${y}${m}${d}-${random}`;
+    }
+
+    function leerReservasLocales() {
+        let reservas = [];
+        try {
+            const lista = JSON.parse(localStorage.getItem('reservasElToldo') || '[]');
+            if (Array.isArray(lista)) reservas = lista;
+        } catch (e) {
+            reservas = [];
+        }
+
+        try {
+            const actual = JSON.parse(localStorage.getItem('reservaActual') || localStorage.getItem('reservaActualElToldo') || 'null');
+            if (actual) {
+                const id = actual.firestore_id || actual.id_gestion;
+                if (id && !reservas.some(r => (r.firestore_id || r.id_gestion) === id)) {
+                    reservas.unshift(actual);
+                }
+            }
+        } catch (e) {}
+
+        return reservas.filter(Boolean).map(r => normalizarReserva(r));
+    }
+
+    function guardarReservaLocal(reserva) {
+        const normalizada = normalizarReserva(reserva);
+        localStorage.setItem('reservaActual', JSON.stringify(normalizada));
+        localStorage.setItem('reservaActualElToldo', JSON.stringify(normalizada));
+
+        let reservas = [];
+        try {
+            const lista = JSON.parse(localStorage.getItem('reservasElToldo') || '[]');
+            if (Array.isArray(lista)) reservas = lista;
+        } catch (e) {
+            reservas = [];
+        }
+
+        const id = normalizada.firestore_id || normalizada.id_gestion;
+        const idx = reservas.findIndex(r => (r.firestore_id || r.id_gestion) === id);
+        if (idx >= 0) reservas[idx] = normalizada;
+        else reservas.unshift(normalizada);
+
+        localStorage.setItem('reservasElToldo', JSON.stringify(reservas.slice(0, 100)));
+        return normalizada;
+    }
+
+    function normalizarReserva(reserva) {
+        const total = Number(reserva.total_invitados || reserva.pax || 0);
+        const ninos = Number(reserva.cantidad_ninos || 0);
+        const adultos = Math.max(total - ninos, 0);
+        const id = reserva.firestore_id || reserva.id_gestion || generarIdReserva();
+
+        return {
+            firestore_id: id,
+            id_gestion: reserva.id_gestion || id,
+            tipo_evento: 'Matrimonio',
+            nombre: reserva.nombre || '',
+            email: reserva.email || '',
+            telefono: reserva.telefono || '',
+            fecha: reserva.fecha || '',
+            total_invitados: total,
+            cantidad_ninos: ninos,
+            cantidad_adultos: adultos,
+            ambiente: reserva.ambiente || 'salon_principal',
+            menu_tipo: reserva.menu_tipo || 'carne',
+            corte_carne: reserva.corte_carne || '',
+            presa_pollo: reserva.presa_pollo || '',
+            corte_cerdo: reserva.corte_cerdo || '',
+            pescado: reserva.pescado || '',
+            acompanamiento: reserva.acompanamiento || 'arroz',
+            ensalada: reserva.ensalada || 'surtida',
+            bebestible: reserva.bebestible || 'bebida',
+            fruta_jugo: reserva.fruta_jugo || '',
+            comentario: reserva.comentario || '',
+            respuesta_admin: reserva.respuesta_admin || '',
+            estado: reserva.estado || 'PENDIENTE',
+            creado_en: reserva.creado_en || new Date().toISOString(),
+            actualizado_en: new Date().toISOString()
+        };
+    }
+
+    const form = document.getElementById('form-reserva');
+    const mensajeEstado = document.getElementById('mensaje-estado');
+    const menuTipo = document.getElementById('menu_tipo');
+    const corteCarne = document.getElementById('corte_carne');
+    const ensalada = document.getElementById('ensalada');
+    const bebestible = document.getElementById('bebestible');
+    const frutaJugo = document.getElementById('fruta_jugo');
+    const detalleMenuCliente = document.getElementById('detalle-menu-cliente');
+
+    const opcionesCarnePorMenu = {
+        carne: ['filete', 'asiento'],
+        pollo_carne: ['filete', 'asiento', 'lomo_liso'],
+        cerdo_carne: ['filete', 'asiento', 'lomo_liso', 'lomo_vetado'],
+        marino: []
+    };
+
+    function mostrarEstado(texto, tipo = '') {
+        mensajeEstado.innerText = texto;
+        mensajeEstado.className = 'estado-formulario ' + tipo;
+        mensajeEstado.style.display = 'block';
+    }
+
+    function mostrarGrupo(id, visible) {
+        const grupo = document.getElementById(id);
+        if (!grupo) return;
+        grupo.style.display = visible ? 'block' : 'none';
+        grupo.querySelectorAll('select, input, textarea').forEach(control => {
+            control.disabled = !visible;
+            if (visible) control.setAttribute('required', 'required');
+            else control.removeAttribute('required');
+        });
+    }
+
+    function cargarOpciones(select, opciones) {
+        select.innerHTML = opciones.map(opcion => `<option value="${opcion}">${txt(opcion)}</option>`).join('');
+    }
+
+    function actualizarAdultos() {
+        const total = Number(form.total_invitados.value || 0);
+        const ninos = Number(form.cantidad_ninos.value || 0);
+        form.cantidad_adultos.value = Math.max(total - ninos, 0);
+    }
+
+    function actualizarCamposMenu() {
+        const menu = menuTipo.value;
+        const esMarino = menu === 'marino';
+
+        mostrarGrupo('grupo_corte_carne', !esMarino);
+        mostrarGrupo('grupo_presa_pollo', menu === 'pollo_carne');
+        mostrarGrupo('grupo_corte_cerdo', menu === 'cerdo_carne');
+        mostrarGrupo('grupo_pescado', esMarino);
+
+        if (!esMarino) cargarOpciones(corteCarne, opcionesCarnePorMenu[menu] || []);
+        cargarOpciones(ensalada, esMarino ? ['surtida', 'chilena'] : ['surtida']);
+
+        actualizarFrutaJugo();
+        actualizarPreviewCliente();
+    }
+
+    function actualizarFrutaJugo() {
+        const visible = bebestible.value === 'jugo_natural';
+        document.getElementById('grupo_fruta_jugo').style.display = visible ? 'block' : 'none';
+        frutaJugo.disabled = !visible;
+        if (visible) frutaJugo.setAttribute('required', 'required');
+        else frutaJugo.removeAttribute('required');
+        actualizarPreviewCliente();
+    }
+
+    function obtenerDatosFormulario() {
+        actualizarAdultos();
+        return {
+            id_gestion: generarIdReserva(),
+            tipo_evento: 'Matrimonio',
+            nombre: form.nombre.value.trim(),
+            email: form.email.value.trim(),
+            telefono: form.telefono.value.trim(),
+            fecha: form.fecha.value,
+            total_invitados: Number(form.total_invitados.value || 0),
+            cantidad_ninos: Number(form.cantidad_ninos.value || 0),
+            cantidad_adultos: Number(form.cantidad_adultos.value || 0),
+            ambiente: form.ambiente.value,
+            menu_tipo: form.menu_tipo.value,
+            corte_carne: form.corte_carne.disabled ? '' : form.corte_carne.value,
+            presa_pollo: form.presa_pollo.disabled ? '' : form.presa_pollo.value,
+            corte_cerdo: form.corte_cerdo.disabled ? '' : form.corte_cerdo.value,
+            pescado: form.pescado.disabled ? '' : form.pescado.value,
+            acompanamiento: form.acompanamiento.value,
+            ensalada: form.ensalada.value,
+            bebestible: form.bebestible.value,
+            fruta_jugo: form.fruta_jugo.disabled ? '' : form.fruta_jugo.value,
+            comentario: form.comentario.value.trim(),
+            estado: 'PENDIENTE'
+        };
+    }
+
+    function actualizarPreviewCliente() {
+        const datos = obtenerDatosFormulario();
+        const items = [];
+        items.push(`<li><strong>Menú:</strong> ${txt(datos.menu_tipo)}</li>`);
+        if (datos.corte_carne) items.push(`<li><strong>Corte de carne:</strong> ${txt(datos.corte_carne)}</li>`);
+        if (datos.presa_pollo) items.push(`<li><strong>Presa de pollo:</strong> ${txt(datos.presa_pollo)}</li>`);
+        if (datos.corte_cerdo) items.push(`<li><strong>Opción de cerdo:</strong> ${txt(datos.corte_cerdo)}</li>`);
+        if (datos.pescado) items.push(`<li><strong>Pescado:</strong> ${txt(datos.pescado)}</li>`);
+        items.push(`<li><strong>Acompañamiento:</strong> ${txt(datos.acompanamiento)}</li>`);
+        items.push(`<li><strong>Ensalada:</strong> ${txt(datos.ensalada)}</li>`);
+        items.push(`<li><strong>Bebestible:</strong> ${txt(datos.bebestible)}${datos.fruta_jugo ? ' de ' + txt(datos.fruta_jugo) : ''}</li>`);
+        items.push('<li><strong>Incluye:</strong> copa de vino para adultos y postre individual por invitado.</li>');
+        detalleMenuCliente.innerHTML = items.join('');
+    }
+
+    form.addEventListener('input', () => {
+        actualizarAdultos();
+        actualizarPreviewCliente();
+    });
+
+    menuTipo.addEventListener('change', actualizarCamposMenu);
+    bebestible.addEventListener('change', actualizarFrutaJugo);
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        actualizarAdultos();
+
+        const total = Number(form.total_invitados.value || 0);
+        const ninos = Number(form.cantidad_ninos.value || 0);
+        if (ninos > total) {
+            alert('La cantidad de niños no puede ser mayor al total de invitados.');
+            return;
+        }
+
+        const datosReserva = obtenerDatosFormulario();
+        const datosGuardados = guardarReservaLocal(datosReserva);
+        mostrarEstado('Reserva registrada correctamente. Redirigiendo al comprobante...', 'ok');
+
+        setTimeout(() => {
+            window.location.href = 'comprobante.html?id=' + encodeURIComponent(datosGuardados.firestore_id);
+        }, 600);
+    });
+
+    actualizarAdultos();
+    actualizarCamposMenu();
+</script>
+
+</body>
+</html>

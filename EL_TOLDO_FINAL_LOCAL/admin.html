@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administrador | El Toldo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><h2>EL TOLDO<span>.</span></h2></div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="formulario.html">Nueva Reserva</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="admin-wrapper">
+        <section id="login-section" class="admin-card admin-login-card">
+            <h1>Acceso Administrador</h1>
+            <p>Ingresa con el usuario administrador de la demo local. El panel usa la información ingresada en la encuesta del cliente.</p>
+
+    <form id="formLogin" class="admin-form">
+                <label>Email</label>
+                <input type="email" id="email" name="email" placeholder="admin@eltoldo.cl" required>
+
+                <label>Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Contraseña" required>
+
+                <button type="submit" class="btn-primary admin-btn-full">Ingresar</button>
+                <p id="login-mensaje" class="admin-mensaje"></p>
+            </form>
+        </section>
+
+        <section id="panel-section" class="admin-panel" style="display:none;">
+            <div class="admin-panel-header">
+                <div>
+                    <h1>Panel de Reservas de Matrimonio</h1>
+                    <p id="admin-usuario">Sesión activa</p>
+                </div>
+                <div class="admin-actions-top">
+                    <button id="btn-recargar" class="btn-secondary admin-btn-dark">Recargar</button>
+                    <button id="btn-salir" class="btn-primary">Cerrar sesión</button>
+                </div>
+            </div>
+
+            <div class="admin-card admin-filtros">
+                <input type="text" id="filtro-texto" placeholder="Buscar por nombre, email, teléfono, ID o menú...">
+                <select id="filtro-estado">
+                    <option value="">Todos los estados</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="CONFIRMADA">Confirmada</option>
+                    <option value="ANULADA">Anulada</option>
+                </select>
+            </div>
+
+            <div class="admin-card">
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Invitados</th>
+                                <th>Menú</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-reservas">
+                            <tr><td colspan="7">Sin datos cargados.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p id="panel-mensaje" class="admin-mensaje"></p>
+            </div>
+        </section>
+
+        <section id="editor-section" class="admin-card admin-editor" style="display:none;">
+            <div class="admin-panel-header">
+                <div>
+                    <h2>Gestión interna de reserva</h2>
+                    <p id="editor-id">Reserva local</p>
+                </div>
+                <button id="btn-cerrar-editor" class="btn-secondary admin-btn-dark">Cerrar</button>
+            </div>
+
+            <div class="admin-alerta-interna">
+                Esta sección es solo para administrador. El cliente no ve los cálculos de suministros.
+            </div>
+
+            <form id="form-editor" class="admin-form admin-form-grid">
+                <input type="hidden" name="firestore_id">
+
+                <div>
+                    <label>ID Gestión</label>
+                    <input type="text" name="id_gestion" readonly>
+                </div>
+
+                <div>
+                    <label>Estado</label>
+                    <select name="estado" required>
+                        <option value="PENDIENTE">PENDIENTE</option>
+                        <option value="CONFIRMADA">CONFIRMADA</option>
+                        <option value="ANULADA">ANULADA</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Nombre del cliente</label>
+                    <input type="text" name="nombre" required>
+                </div>
+
+                <div>
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+
+                <div>
+                    <label>Teléfono</label>
+                    <input type="tel" name="telefono" required>
+                </div>
+
+                <div>
+                    <label>Fecha del matrimonio</label>
+                    <input type="date" name="fecha" required>
+                </div>
+
+                <div>
+                    <label>Total invitados</label>
+                    <input type="number" name="total_invitados" min="1" required>
+                </div>
+
+                <div>
+                    <label>Cantidad de niños</label>
+                    <input type="number" name="cantidad_ninos" min="0" required>
+                </div>
+
+                <div>
+                    <label>Adultos calculados</label>
+                    <input type="number" name="cantidad_adultos" readonly>
+                </div>
+
+                <div>
+                    <label>Ambiente</label>
+                    <select name="ambiente" required>
+                        <option value="salon_principal">Salón principal</option>
+                        <option value="terraza">Terraza al aire libre</option>
+                        <option value="salon_terraza">Salón + terraza</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Menú</label>
+                    <select name="menu_tipo" id="admin_menu_tipo" required>
+                        <option value="carne">Menú Carne</option>
+                        <option value="pollo_carne">Menú Pollo Carne</option>
+                        <option value="cerdo_carne">Menú Cerdo Carne</option>
+                        <option value="marino">Menú Marino</option>
+                    </select>
+                </div>
+
+                <div id="admin_grupo_corte_carne">
+                    <label>Corte de carne</label>
+                    <select name="corte_carne" id="admin_corte_carne"></select>
+                </div>
+
+                <div id="admin_grupo_presa_pollo">
+                    <label>Presa de pollo</label>
+                    <select name="presa_pollo">
+                        <option value="pechuga">Pechuga</option>
+                        <option value="truto">Truto</option>
+                    </select>
+                </div>
+
+                <div id="admin_grupo_corte_cerdo">
+                    <label>Opción de cerdo</label>
+                    <select name="corte_cerdo">
+                        <option value="costillar">Costillar</option>
+                        <option value="porcion_pechuga">Porción de pechuga</option>
+                    </select>
+                </div>
+
+                <div id="admin_grupo_pescado">
+                    <label>Pescado</label>
+                    <select name="pescado">
+                        <option value="reineta">Reineta</option>
+                        <option value="merluza">Merluza</option>
+                        <option value="salmon">Salmón</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Acompañamiento</label>
+                    <select name="acompanamiento" required>
+                        <option value="arroz">Porción de arroz</option>
+                        <option value="pure">Puré</option>
+                        <option value="papas_doradas">Papas doradas</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Ensalada</label>
+                    <select name="ensalada" id="admin_ensalada" required></select>
+                </div>
+
+                <div>
+                    <label>Bebestible</label>
+                    <select name="bebestible" id="admin_bebestible" required>
+                        <option value="bebida">Bebida</option>
+                        <option value="jugo_natural">Jugo natural</option>
+                    </select>
+                </div>
+
+                <div id="admin_grupo_fruta_jugo">
+                    <label>Fruta del jugo</label>
+                    <select name="fruta_jugo">
+                        <option value="pina">Piña</option>
+                        <option value="frutilla">Frutilla</option>
+                        <option value="frambuesa">Frambuesa</option>
+                        <option value="maracuya">Maracuyá</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Nota administrativa</label>
+                    <input type="text" name="respuesta_admin" placeholder="Ej: aprobada para cocina y parrilla">
+                </div>
+
+                <div class="admin-full-width">
+                    <label>Alergias, restricciones u observaciones</label>
+                    <textarea name="comentario"></textarea>
+                </div>
+
+                <div class="admin-editor-actions admin-full-width">
+                    <button type="submit" class="btn-primary">Guardar cambios</button>
+                    <button type="button" id="btn-aprobar" class="btn-secondary admin-btn-dark">Aprobar reserva</button>
+                </div>
+            </form>
+
+            <div class="admin-interno-grid">
+                <section class="admin-card-interno">
+                    <h3>Cálculo interno de suministros</h3>
+                    <p>Información reservada para administración.</p>
+                    <div id="resumen-suministros" class="resumen-suministros"></div>
+                </section>
+
+                <section class="admin-card-interno">
+                    <h3>Requerimiento maestro parrillero</h3>
+                    <textarea id="txt-parrilla" readonly></textarea>
+                    <button type="button" class="btn-primary admin-btn-full" onclick="copiarTexto('txt-parrilla')">Copiar parrilla</button>
+                </section>
+
+                <section class="admin-card-interno">
+                    <h3>Requerimiento maestro cocina</h3>
+                    <textarea id="txt-cocina" readonly></textarea>
+                    <button type="button" class="btn-primary admin-btn-full" onclick="copiarTexto('txt-cocina')">Copiar cocina</button>
+                </section>
+            </div>
+        </section>
+    </main>
+
+
+<script>
+
+    const textos = {
+        carne: 'Menú Carne',
+        pollo_carne: 'Menú Pollo Carne',
+        cerdo_carne: 'Menú Cerdo Carne',
+        marino: 'Menú Marino',
+        filete: 'Filete',
+        asiento: 'Asiento',
+        lomo_liso: 'Lomo liso',
+        lomo_vetado: 'Lomo vetado',
+        pechuga: 'Pechuga',
+        truto: 'Truto',
+        costillar: 'Costillar',
+        porcion_pechuga: 'Porción de pechuga',
+        porcion_chuletas: 'Porción de chuletas',
+        reineta: 'Reineta',
+        merluza: 'Merluza',
+        salmon: 'Salmón',
+        arroz: 'Porción de arroz',
+        pure: 'Puré',
+        papas_doradas: 'Papas doradas',
+        surtida: 'Ensalada surtida individual',
+        chilena: 'Ensalada chilena individual',
+        bebida: 'Bebida',
+        jugo_natural: 'Jugo natural',
+        pina: 'Piña',
+        frutilla: 'Frutilla',
+        frambuesa: 'Frambuesa',
+        maracuya: 'Maracuyá',
+        salon_principal: 'Salón principal',
+        terraza: 'Terraza al aire libre',
+        salon_terraza: 'Salón + terraza'
+    };
+
+    function txt(valor) {
+        return textos[valor] || valor || 'No informado';
+    }
+
+    function escapeHtml(valor) {
+        return String(valor ?? '').replace(/[&<>'"]/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[c]));
+    }
+
+    function generarIdReserva() {
+        const fecha = new Date();
+        const y = fecha.getFullYear();
+        const m = String(fecha.getMonth() + 1).padStart(2, '0');
+        const d = String(fecha.getDate()).padStart(2, '0');
+        const random = Math.floor(1000 + Math.random() * 9000);
+        return `ET-${y}${m}${d}-${random}`;
+    }
+
+    function leerReservasLocales() {
+        let reservas = [];
+        try {
+            const lista = JSON.parse(localStorage.getItem('reservasElToldo') || '[]');
+            if (Array.isArray(lista)) reservas = lista;
+        } catch (e) {
+            reservas = [];
+        }
+
+        try {
+            const actual = JSON.parse(localStorage.getItem('reservaActual') || localStorage.getItem('reservaActualElToldo') || 'null');
+            if (actual) {
+                const id = actual.firestore_id || actual.id_gestion;
+                if (id && !reservas.some(r => (r.firestore_id || r.id_gestion) === id)) {
+                    reservas.unshift(actual);
+                }
+            }
+        } catch (e) {}
+
+        return reservas.filter(Boolean).map(r => normalizarReserva(r));
+    }
+
+    function guardarReservaLocal(reserva) {
+        const normalizada = normalizarReserva(reserva);
+        localStorage.setItem('reservaActual', JSON.stringify(normalizada));
+        localStorage.setItem('reservaActualElToldo', JSON.stringify(normalizada));
+
+        let reservas = [];
+        try {
+            const lista = JSON.parse(localStorage.getItem('reservasElToldo') || '[]');
+            if (Array.isArray(lista)) reservas = lista;
+        } catch (e) {
+            reservas = [];
+        }
+
+        const id = normalizada.firestore_id || normalizada.id_gestion;
+        const idx = reservas.findIndex(r => (r.firestore_id || r.id_gestion) === id);
+        if (idx >= 0) reservas[idx] = normalizada;
+        else reservas.unshift(normalizada);
+
+        localStorage.setItem('reservasElToldo', JSON.stringify(reservas.slice(0, 100)));
+        return normalizada;
+    }
+
+    function normalizarReserva(reserva) {
+        const total = Number(reserva.total_invitados || reserva.pax || 0);
+        const ninos = Number(reserva.cantidad_ninos || 0);
+        const adultos = Math.max(total - ninos, 0);
+        const id = reserva.firestore_id || reserva.id_gestion || generarIdReserva();
+
+        return {
+            firestore_id: id,
+            id_gestion: reserva.id_gestion || id,
+            tipo_evento: 'Matrimonio',
+            nombre: reserva.nombre || '',
+            email: reserva.email || '',
+            telefono: reserva.telefono || '',
+            fecha: reserva.fecha || '',
+            total_invitados: total,
+            cantidad_ninos: ninos,
+            cantidad_adultos: adultos,
+            ambiente: reserva.ambiente || 'salon_principal',
+            menu_tipo: reserva.menu_tipo || 'carne',
+            corte_carne: reserva.corte_carne || '',
+            presa_pollo: reserva.presa_pollo || '',
+            corte_cerdo: reserva.corte_cerdo || '',
+            pescado: reserva.pescado || '',
+            acompanamiento: reserva.acompanamiento || 'arroz',
+            ensalada: reserva.ensalada || 'surtida',
+            bebestible: reserva.bebestible || 'bebida',
+            fruta_jugo: reserva.fruta_jugo || '',
+            comentario: reserva.comentario || '',
+            respuesta_admin: reserva.respuesta_admin || '',
+            estado: reserva.estado || 'PENDIENTE',
+            creado_en: reserva.creado_en || new Date().toISOString(),
+            actualizado_en: new Date().toISOString()
+        };
+    }
+
+    let sesion = JSON.parse(localStorage.getItem('adminSesionElToldo') || 'null');
+    let reservas = [];
+
+    const loginSection = document.getElementById('login-section');
+    const panelSection = document.getElementById('panel-section');
+    const editorSection = document.getElementById('editor-section');
+    const formLogin = document.getElementById('formLogin');
+    const formEditor = document.getElementById('form-editor');
+    const tablaReservas = document.getElementById('tabla-reservas');
+    const panelMensaje = document.getElementById('panel-mensaje');
+    const loginMensaje = document.getElementById('login-mensaje');
+    const filtroTexto = document.getElementById('filtro-texto');
+    const filtroEstado = document.getElementById('filtro-estado');
+
+    const opcionesCarnePorMenu = {
+        carne: ['filete', 'asiento'],
+        pollo_carne: ['filete', 'asiento', 'lomo_liso'],
+        cerdo_carne: ['filete', 'asiento', 'lomo_liso', 'lomo_vetado'],
+        marino: []
+    };
+
+    function fmt(num, dec = 2) {
+        return Number(num || 0).toFixed(dec).replace('.', ',');
+    }
+
+    function setMensaje(elemento, texto, tipo = '') {
+        if (!elemento) return;
+        elemento.innerText = texto || '';
+        elemento.className = 'admin-mensaje ' + tipo;
+    }
+
+    function mostrarLogin() {
+        loginSection.style.display = 'block';
+        panelSection.style.display = 'none';
+        editorSection.style.display = 'none';
+    }
+
+    function mostrarPanel() {
+        loginSection.style.display = 'none';
+        panelSection.style.display = 'block';
+        document.getElementById('admin-usuario').innerText = 'Sesión activa: ' + (sesion?.email || 'administrador');
+    }
+
+    async function loginLocal(email, password) {
+        if (!email || !password) throw new Error('Debes ingresar email y contraseña.');
+        if (email.toLowerCase() !== 'admin@eltoldo.cl') {
+            throw new Error('Usuario administrador no válido para la demo. Usa admin@eltoldo.cl');
+        }
+        return {
+            email,
+            modo: 'demo-local',
+            iniciado_en: new Date().toISOString()
+        };
+    }
+
+    function estadoClase(estado) {
+        if (estado === 'CONFIRMADA') return 'estado-ok';
+        if (estado === 'ANULADA') return 'estado-danger';
+        return 'estado-pendiente';
+    }
+
+    async function listarReservas() {
+        reservas = leerReservasLocales();
+        pintarTabla();
+        if (reservas.length) {
+            setMensaje(panelMensaje, `Reservas cargadas desde la encuesta: ${reservas.length}. Presiona Gestionar para ver suministros internos.`, 'ok');
+        } else {
+            setMensaje(panelMensaje, 'No hay reservas locales. Crea primero una reserva desde Nueva Reserva.', 'error');
+        }
+    }
+
+    function pintarTabla() {
+        const texto = (filtroTexto.value || '').trim().toLowerCase();
+        const estado = filtroEstado.value;
+        const filtradas = reservas.filter(reserva => {
+            const bolsa = [reserva.id_gestion, reserva.nombre, reserva.email, reserva.telefono, reserva.fecha, txt(reserva.menu_tipo), reserva.estado]
+                .join(' ').toLowerCase();
+            return (!texto || bolsa.includes(texto)) && (!estado || reserva.estado === estado);
+        });
+
+        if (!filtradas.length) {
+            tablaReservas.innerHTML = '<tr><td colspan="7">No hay reservas que coincidan con el filtro.</td></tr>';
+            return;
+        }
+
+        tablaReservas.innerHTML = filtradas.map(reserva => `
+            <tr>
+                <td>${escapeHtml(reserva.id_gestion || reserva.firestore_id)}</td>
+                <td><strong>${escapeHtml(reserva.nombre)}</strong><br><small>${escapeHtml(reserva.email)}</small></td>
+                <td>${escapeHtml(reserva.fecha || 'Sin fecha')}</td>
+                <td>${escapeHtml(reserva.total_invitados || 0)} total<br><small>${escapeHtml(reserva.cantidad_ninos || 0)} niños</small></td>
+                <td>${escapeHtml(txt(reserva.menu_tipo))}</td>
+                <td><span class="estado-pill ${estadoClase(reserva.estado)}">${escapeHtml(reserva.estado)}</span></td>
+                <td><button class="admin-btn-small" onclick="abrirEditor('${escapeHtml(reserva.firestore_id)}')">Gestionar</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function cargarOpciones(select, opciones, valorActual = '') {
+        select.innerHTML = opciones.map(opcion => `<option value="${opcion}">${txt(opcion)}</option>`).join('');
+        if (valorActual && opciones.includes(valorActual)) select.value = valorActual;
+    }
+
+    function mostrarAdminGrupo(id, visible) {
+        const grupo = document.getElementById(id);
+        if (!grupo) return;
+        grupo.style.display = visible ? 'block' : 'none';
+        grupo.querySelectorAll('select,input,textarea').forEach(control => {
+            control.disabled = !visible;
+            if (!visible) control.removeAttribute('required');
+        });
+    }
+
+    function actualizarAdultosEditor() {
+        const total = Number(formEditor.total_invitados.value || 0);
+        const ninos = Number(formEditor.cantidad_ninos.value || 0);
+        formEditor.cantidad_adultos.value = Math.max(total - ninos, 0);
+    }
+
+    function actualizarCamposEditor(valorCarneActual = '') {
+        const menu = formEditor.menu_tipo.value;
+        const esMarino = menu === 'marino';
+
+        mostrarAdminGrupo('admin_grupo_corte_carne', !esMarino);
+        mostrarAdminGrupo('admin_grupo_presa_pollo', menu === 'pollo_carne');
+        mostrarAdminGrupo('admin_grupo_corte_cerdo', menu === 'cerdo_carne');
+        mostrarAdminGrupo('admin_grupo_pescado', esMarino);
+
+        if (!esMarino) cargarOpciones(document.getElementById('admin_corte_carne'), opcionesCarnePorMenu[menu] || [], valorCarneActual);
+        cargarOpciones(document.getElementById('admin_ensalada'), esMarino ? ['surtida', 'chilena'] : ['surtida'], formEditor.ensalada.value || 'surtida');
+
+        const jugo = formEditor.bebestible.value === 'jugo_natural';
+        mostrarAdminGrupo('admin_grupo_fruta_jugo', jugo);
+        refrescarCalculosInternos();
+    }
+
+    window.abrirEditor = function(idReserva) {
+        const reserva = reservas.find(item => (item.firestore_id || item.id_gestion) === idReserva);
+        if (!reserva) return;
+
+        formEditor.firestore_id.value = reserva.firestore_id;
+        formEditor.id_gestion.value = reserva.id_gestion || reserva.firestore_id;
+        formEditor.estado.value = reserva.estado || 'PENDIENTE';
+        formEditor.nombre.value = reserva.nombre || '';
+        formEditor.email.value = reserva.email || '';
+        formEditor.telefono.value = reserva.telefono || '';
+        formEditor.fecha.value = reserva.fecha || '';
+        formEditor.total_invitados.value = reserva.total_invitados || 0;
+        formEditor.cantidad_ninos.value = reserva.cantidad_ninos || 0;
+        formEditor.cantidad_adultos.value = reserva.cantidad_adultos || 0;
+        formEditor.ambiente.value = reserva.ambiente || 'salon_principal';
+        formEditor.menu_tipo.value = reserva.menu_tipo || 'carne';
+        formEditor.presa_pollo.value = reserva.presa_pollo || 'pechuga';
+        formEditor.corte_cerdo.value = reserva.corte_cerdo || 'costillar';
+        formEditor.pescado.value = reserva.pescado || 'reineta';
+        formEditor.acompanamiento.value = reserva.acompanamiento || 'arroz';
+        formEditor.bebestible.value = reserva.bebestible || 'bebida';
+        formEditor.fruta_jugo.value = reserva.fruta_jugo || 'pina';
+        formEditor.respuesta_admin.value = reserva.respuesta_admin || '';
+        formEditor.comentario.value = reserva.comentario || '';
+
+        actualizarAdultosEditor();
+        actualizarCamposEditor(reserva.corte_carne || '');
+        formEditor.ensalada.value = reserva.ensalada || 'surtida';
+
+        document.getElementById('editor-id').innerText = 'Reserva local: ' + (reserva.id_gestion || reserva.firestore_id);
+        editorSection.style.display = 'block';
+        editorSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        refrescarCalculosInternos();
+    };
+
+    function obtenerDatosEditor() {
+        actualizarAdultosEditor();
+        return normalizarReserva({
+            firestore_id: formEditor.firestore_id.value,
+            id_gestion: formEditor.id_gestion.value,
+            tipo_evento: 'Matrimonio',
+            estado: formEditor.estado.value,
+            nombre: formEditor.nombre.value.trim(),
+            email: formEditor.email.value.trim(),
+            telefono: formEditor.telefono.value.trim(),
+            fecha: formEditor.fecha.value,
+            total_invitados: Number(formEditor.total_invitados.value || 0),
+            cantidad_ninos: Number(formEditor.cantidad_ninos.value || 0),
+            ambiente: formEditor.ambiente.value,
+            menu_tipo: formEditor.menu_tipo.value,
+            corte_carne: formEditor.corte_carne.disabled ? '' : formEditor.corte_carne.value,
+            presa_pollo: formEditor.presa_pollo.disabled ? '' : formEditor.presa_pollo.value,
+            corte_cerdo: formEditor.corte_cerdo.disabled ? '' : formEditor.corte_cerdo.value,
+            pescado: formEditor.pescado.disabled ? '' : formEditor.pescado.value,
+            acompanamiento: formEditor.acompanamiento.value,
+            ensalada: formEditor.ensalada.value,
+            bebestible: formEditor.bebestible.value,
+            fruta_jugo: formEditor.fruta_jugo.disabled ? '' : formEditor.fruta_jugo.value,
+            respuesta_admin: formEditor.respuesta_admin.value.trim(),
+            comentario: formEditor.comentario.value.trim()
+        });
+    }
+
+    function calcularSuministros(datos) {
+        const total = Number(datos.total_invitados || 0);
+        const ninos = Number(datos.cantidad_ninos || 0);
+        const adultos = Math.max(total - ninos, 0);
+        const s = {
+            adultos,
+            ninos,
+            total,
+            carne_kg: 0,
+            pollo_kg: 0,
+            cerdo_kg: 0,
+            pescado_kg: 0,
+            arroz_kg: 0,
+            papa_kg: 0,
+            palta_kg: 0,
+            palmito_kg: 0,
+            lechuga_kg: 0,
+            choclo_kg: 0,
+            tomate_kg: 0,
+            cebolla_kg: 0,
+            vino_litros: adultos * 0.15,
+            bebida_litros: 0,
+            fruta_jugo_kg: 0,
+            postres_unidades: total
+        };
+
+        if (datos.menu_tipo === 'carne') s.carne_kg = total * 0.25;
+        if (datos.menu_tipo === 'pollo_carne') { s.carne_kg = total * 0.15; s.pollo_kg = total * 0.15; }
+        if (datos.menu_tipo === 'cerdo_carne') { s.carne_kg = total * 0.15; s.cerdo_kg = total * 0.18; }
+        if (datos.menu_tipo === 'marino') s.pescado_kg = total * 0.22;
+
+        if (datos.acompanamiento === 'arroz') s.arroz_kg = total * 0.08;
+        if (datos.acompanamiento === 'pure' || datos.acompanamiento === 'papas_doradas') s.papa_kg = total * 0.25;
+
+        if (datos.ensalada === 'chilena') {
+            s.tomate_kg = total * 0.12;
+            s.cebolla_kg = total * 0.03;
+        } else {
+            s.palta_kg = total * 0.05;
+            s.palmito_kg = total * 0.04;
+            s.lechuga_kg = total * 0.04;
+            s.choclo_kg = total * 0.05;
+            s.tomate_kg = total * 0.08;
+        }
+
+        if (datos.bebestible === 'bebida') s.bebida_litros = total * 0.35;
+        if (datos.bebestible === 'jugo_natural') {
+            const factores = { pina: 0.12, frutilla: 0.10, frambuesa: 0.09, maracuya: 0.08 };
+            s.fruta_jugo_kg = total * (factores[datos.fruta_jugo] || 0.10);
+        }
+        return s;
+    }
+
+    function lineasSuministros(datos, s) {
+        const lineas = [];
+        if (s.carne_kg) lineas.push(`Carne ${txt(datos.corte_carne)}: ${fmt(s.carne_kg)} kg`);
+        if (s.pollo_kg) lineas.push(`Pollo ${txt(datos.presa_pollo)}: ${fmt(s.pollo_kg)} kg`);
+        if (s.cerdo_kg) lineas.push(`Cerdo ${txt(datos.corte_cerdo)}: ${fmt(s.cerdo_kg)} kg`);
+        if (s.pescado_kg) lineas.push(`Pescado ${txt(datos.pescado)}: ${fmt(s.pescado_kg)} kg`);
+        if (s.arroz_kg) lineas.push(`Arroz: ${fmt(s.arroz_kg)} kg`);
+        if (s.papa_kg) lineas.push(`Papa para ${txt(datos.acompanamiento)}: ${fmt(s.papa_kg)} kg`);
+        if (s.palta_kg) lineas.push(`Palta: ${fmt(s.palta_kg)} kg`);
+        if (s.palmito_kg) lineas.push(`Palmito: ${fmt(s.palmito_kg)} kg`);
+        if (s.lechuga_kg) lineas.push(`Lechuga: ${fmt(s.lechuga_kg)} kg`);
+        if (s.choclo_kg) lineas.push(`Choclo: ${fmt(s.choclo_kg)} kg`);
+        if (s.tomate_kg) lineas.push(`Tomate: ${fmt(s.tomate_kg)} kg`);
+        if (s.cebolla_kg) lineas.push(`Cebolla: ${fmt(s.cebolla_kg)} kg`);
+        lineas.push(`Vino: ${fmt(s.vino_litros)} litros`);
+        if (s.bebida_litros) lineas.push(`Bebida: ${fmt(s.bebida_litros)} litros`);
+        if (s.fruta_jugo_kg) lineas.push(`Fruta ${txt(datos.fruta_jugo)} para jugo: ${fmt(s.fruta_jugo_kg)} kg`);
+        lineas.push(`Postres individuales: ${s.postres_unidades} unidades`);
+        return lineas;
+    }
+
+    function refrescarCalculosInternos() {
+        if (!formEditor.firestore_id.value) return;
+        const datos = obtenerDatosEditor();
+        const s = calcularSuministros(datos);
+        const lineas = lineasSuministros(datos, s);
+        document.getElementById('resumen-suministros').innerHTML = `
+            <p><strong>Total invitados:</strong> ${s.total}</p>
+            <p><strong>Adultos:</strong> ${s.adultos}</p>
+            <p><strong>Niños:</strong> ${s.ninos}</p>
+            <ul>${lineas.map(linea => `<li>${escapeHtml(linea)}</li>`).join('')}</ul>
+        `;
+
+        document.getElementById('txt-parrilla').value = generarTextoParrilla(datos, s);
+        document.getElementById('txt-cocina').value = generarTextoCocina(datos, s);
+    }
+
+    function generarTextoParrilla(datos, s) {
+        const lineas = [
+            'REQUERIMIENTO MAESTRO PARRILLERO',
+            `Reserva: ${datos.id_gestion}`,
+            `Cliente: ${datos.nombre}`,
+            `Fecha matrimonio: ${datos.fecha}`,
+            `Invitados: ${s.total} | Adultos: ${s.adultos} | Niños: ${s.ninos}`,
+            `Menú: ${txt(datos.menu_tipo)}`,
+            ''
+        ];
+        if (s.carne_kg) lineas.push(`Carne ${txt(datos.corte_carne)}: ${fmt(s.carne_kg)} kg`);
+        if (s.pollo_kg) lineas.push(`Pollo ${txt(datos.presa_pollo)}: ${fmt(s.pollo_kg)} kg`);
+        if (s.cerdo_kg) lineas.push(`Cerdo ${txt(datos.corte_cerdo)}: ${fmt(s.cerdo_kg)} kg`);
+        if (s.pescado_kg) lineas.push(`Pescado ${txt(datos.pescado)}: ${fmt(s.pescado_kg)} kg`);
+        if (datos.comentario) lineas.push('', `Observaciones: ${datos.comentario}`);
+        return lineas.join('\n');
+    }
+
+    function generarTextoCocina(datos, s) {
+        const lineas = [
+            'REQUERIMIENTO MAESTRO DE COCINA',
+            `Reserva: ${datos.id_gestion}`,
+            `Cliente: ${datos.nombre}`,
+            `Fecha matrimonio: ${datos.fecha}`,
+            `Invitados: ${s.total} | Adultos: ${s.adultos} | Niños: ${s.ninos}`,
+            `Menú: ${txt(datos.menu_tipo)}`,
+            `Acompañamiento: ${txt(datos.acompanamiento)}`,
+            `Ensalada: ${txt(datos.ensalada)}`,
+            `Bebestible: ${txt(datos.bebestible)}${datos.fruta_jugo ? ' de ' + txt(datos.fruta_jugo) : ''}`,
+            ''
+        ];
+        if (s.arroz_kg) lineas.push(`Arroz: ${fmt(s.arroz_kg)} kg`);
+        if (s.papa_kg) lineas.push(`Papa para ${txt(datos.acompanamiento)}: ${fmt(s.papa_kg)} kg`);
+        if (s.palta_kg) lineas.push(`Palta: ${fmt(s.palta_kg)} kg`);
+        if (s.palmito_kg) lineas.push(`Palmito: ${fmt(s.palmito_kg)} kg`);
+        if (s.lechuga_kg) lineas.push(`Lechuga: ${fmt(s.lechuga_kg)} kg`);
+        if (s.choclo_kg) lineas.push(`Choclo: ${fmt(s.choclo_kg)} kg`);
+        if (s.tomate_kg) lineas.push(`Tomate: ${fmt(s.tomate_kg)} kg`);
+        if (s.cebolla_kg) lineas.push(`Cebolla: ${fmt(s.cebolla_kg)} kg`);
+        lineas.push(`Vino: ${fmt(s.vino_litros)} litros`);
+        if (s.bebida_litros) lineas.push(`Bebida: ${fmt(s.bebida_litros)} litros`);
+        if (s.fruta_jugo_kg) lineas.push(`Fruta ${txt(datos.fruta_jugo)} para jugo: ${fmt(s.fruta_jugo_kg)} kg`);
+        lineas.push(`Postres individuales: ${s.postres_unidades} unidades`);
+        if (datos.comentario) lineas.push('', `Observaciones: ${datos.comentario}`);
+        return lineas.join('\n');
+    }
+
+    window.copiarTexto = async function(id) {
+        const texto = document.getElementById(id).value;
+        try {
+            await navigator.clipboard.writeText(texto);
+            setMensaje(panelMensaje, 'Texto copiado al portapapeles.', 'ok');
+        } catch (e) {
+            alert(texto);
+        }
+    };
+
+    formEditor.addEventListener('input', () => {
+        actualizarAdultosEditor();
+        refrescarCalculosInternos();
+    });
+    formEditor.menu_tipo.addEventListener('change', () => actualizarCamposEditor(''));
+    formEditor.bebestible.addEventListener('change', () => actualizarCamposEditor(formEditor.corte_carne.value));
+
+    formEditor.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const datos = obtenerDatosEditor();
+        guardarReservaLocal(datos);
+        reservas = leerReservasLocales();
+        pintarTabla();
+        setMensaje(panelMensaje, 'Reserva actualizada localmente.', 'ok');
+        refrescarCalculosInternos();
+    });
+
+    document.getElementById('btn-aprobar').addEventListener('click', () => {
+        formEditor.estado.value = 'CONFIRMADA';
+        const datos = obtenerDatosEditor();
+        datos.estado = 'CONFIRMADA';
+        datos.respuesta_admin = datos.respuesta_admin || 'Reserva aprobada para cocina y parrilla.';
+        guardarReservaLocal(datos);
+        reservas = leerReservasLocales();
+        pintarTabla();
+        setMensaje(panelMensaje, 'Reserva aprobada. Ya puedes copiar los requerimientos internos.', 'ok');
+        refrescarCalculosInternos();
+    });
+
+    document.getElementById('btn-cerrar-editor').addEventListener('click', () => {
+        editorSection.style.display = 'none';
+    });
+
+    document.getElementById('btn-recargar').addEventListener('click', listarReservas);
+    document.getElementById('btn-salir').addEventListener('click', () => {
+        localStorage.removeItem('adminSesionElToldo');
+        sesion = null;
+        mostrarLogin();
+    });
+
+    filtroTexto.addEventListener('input', pintarTabla);
+    filtroEstado.addEventListener('change', pintarTabla);
+
+    formLogin.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        setMensaje(loginMensaje, 'Validando usuario...');
+        try {
+            sesion = await loginLocal(email, password);
+            localStorage.setItem('adminSesionElToldo', JSON.stringify(sesion));
+            setMensaje(loginMensaje, 'Sesión iniciada correctamente.', 'ok');
+            mostrarPanel();
+            await listarReservas();
+        } catch (error) {
+            console.error(error);
+            setMensaje(loginMensaje, 'No se pudo iniciar sesión: ' + (error.message || 'Error desconocido'), 'error');
+        }
+    });
+
+    if (sesion) {
+        mostrarPanel();
+        listarReservas();
+    } else {
+        mostrarLogin();
+    }
+</script>
+
+</body>
+</html>

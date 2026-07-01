@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobante de Reserva | El Toldo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo"><h2>EL TOLDO<span>.</span></h2></div>
+        <nav><ul><li><a href="index.html">Volver al Inicio</a></li></ul></nav>
+    </header>
+
+    <div class="ticket-wrapper">
+        <div class="ticket ticket-matrimonio">
+            <div class="ticket-header">
+                <h1>COMPROBANTE DE RESERVA</h1>
+                <p>Reserva de matrimonio</p>
+                <p>ID de Reserva: <strong id="ticket-id">ET-0000</strong></p>
+                <div class="badge-estado">Estado: <span id="ticket-estado">PENDIENTE</span></div>
+            </div>
+
+            <div class="ticket-body">
+                <h3>Datos del cliente</h3>
+                <p><strong>Nombre:</strong> <span id="ticket-nombre">Cargando...</span></p>
+                <p><strong>Contacto:</strong> <span id="ticket-contacto">Cargando...</span></p>
+
+                <hr class="ticket-separador">
+
+                <h3>Datos del matrimonio</h3>
+                <p><strong>Fecha del evento:</strong> <span id="ticket-fecha">Cargando...</span></p>
+                <p><strong>Ambiente solicitado:</strong> <span id="ticket-ambiente">Cargando...</span></p>
+                <p><strong>Total invitados:</strong> <span id="ticket-total">0</span></p>
+                <p><strong>Niños:</strong> <span id="ticket-ninos">0</span></p>
+                <p><strong>Adultos:</strong> <span id="ticket-adultos">0</span></p>
+
+                <hr class="ticket-separador">
+
+                <h3>Menú seleccionado</h3>
+                <p><strong>Tipo de menú:</strong> <span id="ticket-menu">Cargando...</span></p>
+                <ul id="ticket-detalle-menu" class="ticket-lista-menu"></ul>
+
+                <hr class="ticket-separador">
+
+                <h3>Observaciones</h3>
+                <p id="ticket-notas" class="ticket-notas">Sin comentarios</p>
+
+                <div class="mensaje-confirmacion-cliente">
+                    <strong>Solicitud recibida:</strong>
+                    <p>
+                        Tu reserva fue ingresada correctamente. El administrador de El Toldo revisará la disponibilidad, confirmará el menú seleccionado y se contactará contigo para los siguientes pasos.
+                    </p>
+                    <p class="nota-interna-cliente">
+                        El cálculo de suministros es de uso interno y será revisado por el administrador, maestro de cocina y maestro parrillero.
+                    </p>
+                </div>
+            </div>
+
+            <div class="ticket-footer">
+                <p>Guarda este comprobante como respaldo de tu solicitud.</p>
+                <br>
+                <button onclick="window.print()" class="btn-secondary" style="color:#000; border-color:#000;">
+                    <i class="fa-solid fa-print"></i> Imprimir comprobante
+                </button>
+                <a href="index.html" class="btn-primary" style="margin-left:10px;">Volver al inicio</a>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+
+    const textos = {
+        carne: 'Menú Carne',
+        pollo_carne: 'Menú Pollo Carne',
+        cerdo_carne: 'Menú Cerdo Carne',
+        marino: 'Menú Marino',
+        filete: 'Filete',
+        asiento: 'Asiento',
+        lomo_liso: 'Lomo liso',
+        lomo_vetado: 'Lomo vetado',
+        pechuga: 'Pechuga',
+        truto: 'Truto',
+        costillar: 'Costillar',
+        porcion_pechuga: 'Porción de pechuga',
+        porcion_chuletas: 'Porción de chuletas',
+        reineta: 'Reineta',
+        merluza: 'Merluza',
+        salmon: 'Salmón',
+        arroz: 'Porción de arroz',
+        pure: 'Puré',
+        papas_doradas: 'Papas doradas',
+        surtida: 'Ensalada surtida individual',
+        chilena: 'Ensalada chilena individual',
+        bebida: 'Bebida',
+        jugo_natural: 'Jugo natural',
+        pina: 'Piña',
+        frutilla: 'Frutilla',
+        frambuesa: 'Frambuesa',
+        maracuya: 'Maracuyá',
+        salon_principal: 'Salón principal',
+        terraza: 'Terraza al aire libre',
+        salon_terraza: 'Salón + terraza'
+    };
+
+    function txt(valor) {
+        return textos[valor] || valor || 'No informado';
+    }
+
+    function escapeHtml(valor) {
+        return String(valor ?? '').replace(/[&<>'"]/g, c => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+        }[c]));
+    }
+
+    function generarIdReserva() {
+        const fecha = new Date();
+        const y = fecha.getFullYear();
+        const m = String(fecha.getMonth() + 1).padStart(2, '0');
+        const d = String(fecha.getDate()).padStart(2, '0');
+        const random = Math.floor(1000 + Math.random() * 9000);
+        return `ET-${y}${m}${d}-${random}`;
+    }
+
+    function leerReservasLocales() {
+        let reservas = [];
+        try {
+            const lista = JSON.parse(localStorage.getItem('reservasElToldo') || '[]');
+            if (Array.isArray(lista)) reservas = lista;
+        } catch (e) {
+            reservas = [];
+        }
+
+        try {
+            const actual = JSON.parse(localStorage.getItem('reservaActual') || localStorage.getItem('reservaActualElToldo') || 'null');
+            if (actual) {
+                const id = actual.firestore_id || actual.id_gestion;
+                if (id && !reservas.some(r => (r.firestore_id || r.id_gestion) === id)) {
+                    reservas.unshift(actual);
+                }
+            }
+        } catch (e) {}
+
+        return reservas.filter(Boolean).map(r => normalizarReserva(r));
+    }
+
+    function guardarReservaLocal(reserva) {
+        const normalizada = normalizarReserva(reserva);
+        localStorage.setItem('reservaActual', JSON.stringify(normalizada));
+        localStorage.setItem('reservaActualElToldo', JSON.stringify(normalizada));
+
+        let reservas = [];
+        try {
+            const lista = JSON.parse(localStorage.getItem('reservasElToldo') || '[]');
+            if (Array.isArray(lista)) reservas = lista;
+        } catch (e) {
+            reservas = [];
+        }
+
+        const id = normalizada.firestore_id || normalizada.id_gestion;
+        const idx = reservas.findIndex(r => (r.firestore_id || r.id_gestion) === id);
+        if (idx >= 0) reservas[idx] = normalizada;
+        else reservas.unshift(normalizada);
+
+        localStorage.setItem('reservasElToldo', JSON.stringify(reservas.slice(0, 100)));
+        return normalizada;
+    }
+
+    function normalizarReserva(reserva) {
+        const total = Number(reserva.total_invitados || reserva.pax || 0);
+        const ninos = Number(reserva.cantidad_ninos || 0);
+        const adultos = Math.max(total - ninos, 0);
+        const id = reserva.firestore_id || reserva.id_gestion || generarIdReserva();
+
+        return {
+            firestore_id: id,
+            id_gestion: reserva.id_gestion || id,
+            tipo_evento: 'Matrimonio',
+            nombre: reserva.nombre || '',
+            email: reserva.email || '',
+            telefono: reserva.telefono || '',
+            fecha: reserva.fecha || '',
+            total_invitados: total,
+            cantidad_ninos: ninos,
+            cantidad_adultos: adultos,
+            ambiente: reserva.ambiente || 'salon_principal',
+            menu_tipo: reserva.menu_tipo || 'carne',
+            corte_carne: reserva.corte_carne || '',
+            presa_pollo: reserva.presa_pollo || '',
+            corte_cerdo: reserva.corte_cerdo || '',
+            pescado: reserva.pescado || '',
+            acompanamiento: reserva.acompanamiento || 'arroz',
+            ensalada: reserva.ensalada || 'surtida',
+            bebestible: reserva.bebestible || 'bebida',
+            fruta_jugo: reserva.fruta_jugo || '',
+            comentario: reserva.comentario || '',
+            respuesta_admin: reserva.respuesta_admin || '',
+            estado: reserva.estado || 'PENDIENTE',
+            creado_en: reserva.creado_en || new Date().toISOString(),
+            actualizado_en: new Date().toISOString()
+        };
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const reservaId = params.get('id');
+
+    function buscarReservaLocal(id) {
+        const reservas = leerReservasLocales();
+        if (id) {
+            const encontrada = reservas.find(r => (r.firestore_id || r.id_gestion) === id);
+            if (encontrada) return encontrada;
+        }
+        return reservas[0] || null;
+    }
+
+    function detalleMenu(datos) {
+        const items = [];
+        if (datos.corte_carne) items.push(`Corte de carne: ${txt(datos.corte_carne)}`);
+        if (datos.presa_pollo) items.push(`Presa de pollo: ${txt(datos.presa_pollo)}`);
+        if (datos.corte_cerdo) items.push(`Opción de cerdo: ${txt(datos.corte_cerdo)}`);
+        if (datos.pescado) items.push(`Pescado: ${txt(datos.pescado)}`);
+        if (datos.acompanamiento) items.push(`Acompañamiento: ${txt(datos.acompanamiento)}`);
+        if (datos.ensalada) items.push(`Ensalada: ${txt(datos.ensalada)}`);
+        if (datos.bebestible) items.push(`Bebestible: ${txt(datos.bebestible)}${datos.fruta_jugo ? ' de ' + txt(datos.fruta_jugo) : ''}`);
+        items.push('Incluye copa de vino para adultos.');
+        items.push('Incluye postre individual por invitado.');
+        return items;
+    }
+
+    function pintarComprobante(datos) {
+        const total = Number(datos.total_invitados || 0);
+        const ninos = Number(datos.cantidad_ninos || 0);
+        const adultos = Math.max(total - ninos, 0);
+
+        document.getElementById('ticket-id').innerText = datos.id_gestion || datos.firestore_id || 'ET-0000';
+        document.getElementById('ticket-estado').innerText = datos.estado || 'PENDIENTE';
+        document.getElementById('ticket-nombre').innerText = datos.nombre || 'No informado';
+        document.getElementById('ticket-contacto').innerText = `${datos.email || 'Sin email'} | ${datos.telefono || 'Sin teléfono'}`;
+        document.getElementById('ticket-fecha').innerText = datos.fecha || 'No informada';
+        document.getElementById('ticket-ambiente').innerText = txt(datos.ambiente);
+        document.getElementById('ticket-total').innerText = total + ' invitados';
+        document.getElementById('ticket-ninos').innerText = ninos;
+        document.getElementById('ticket-adultos').innerText = adultos;
+        document.getElementById('ticket-menu').innerText = txt(datos.menu_tipo);
+        document.getElementById('ticket-detalle-menu').innerHTML = detalleMenu(datos).map(item => `<li>${escapeHtml(item)}</li>`).join('');
+        document.getElementById('ticket-notas').innerText = datos.comentario && datos.comentario.trim() !== '' ? datos.comentario : 'Sin comentarios';
+    }
+
+    function cargarComprobante() {
+        const datos = buscarReservaLocal(reservaId);
+        if (!datos) {
+            document.getElementById('ticket-nombre').innerText = 'No se encontraron datos de la reserva.';
+            document.getElementById('ticket-contacto').innerText = 'Regresa al formulario y realiza una nueva solicitud.';
+            return;
+        }
+        pintarComprobante(datos);
+    }
+
+    cargarComprobante();
+</script>
+
+</body>
+</html>
