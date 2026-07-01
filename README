@@ -1,40 +1,172 @@
-# Sistema Web de Reservas - El Toldo
+# Sistema Web de Reservas de Matrimonio - El Toldo
 
-## Descripción del proyecto
+## Descripción del Proyecto
 
-El Toldo es un sistema web desarrollado para una banquetería de asados, cuyo objetivo es digitalizar el proceso de solicitud y gestión de reservas de eventos.
+**El Toldo** es una aplicación web desarrollada como proyecto académico para gestionar reservas de matrimonios.  
+El sistema permite que un cliente registre una solicitud de reserva, seleccione uno de los menús disponibles y visualice un comprobante con los datos ingresados.
 
-La aplicación permite que un cliente revise información del servicio, complete un formulario de reserva y visualice un comprobante con los datos ingresados. Además, contempla un panel administrador para consultar, filtrar y actualizar reservas recibidas.
+Además, cuenta con un panel administrador que permite revisar las reservas registradas, calcular los suministros internos necesarios para el evento y generar requerimientos separados para el jefe de cocina y el maestro parrillero.
 
-## Tecnologías utilizadas
+El objetivo principal del proyecto es digitalizar el proceso de reservas matrimoniales y apoyar la planificación interna del servicio de banquetería.
 
-* HTML5
-* CSS3
-* JavaScript Vanilla
-* Firebase Cloud Firestore
-* Firebase Authentication
-* Firebase REST API
-* localStorage
-* Live Server
-* Git y GitHub
+---
 
-## Funcionalidades principales
+## Objetivo del Sistema
 
-* Página de inicio del sitio web.
-* Sección de servicios.
-* Sección nosotros.
-* Galería de imágenes.
-* Página de contacto.
-* Formulario de solicitud de reserva.
-* Registro de reservas en Cloud Firestore.
-* Generación de comprobante de reserva.
-* Panel administrador para consultar y actualizar reservas.
-* Respaldo local mediante localStorage en caso de contingencia de conexión.
+Permitir que un cliente pueda realizar una reserva de matrimonio de forma simple, seleccionando un menú y entregando los datos necesarios del evento.
 
-## Estructura del proyecto
+A nivel interno, el administrador puede utilizar la información ingresada para calcular los suministros requeridos y coordinar la preparación del evento con cocina y parrilla.
+
+---
+
+## Tecnologías Utilizadas
+
+- HTML5
+- CSS3
+- JavaScript Vanilla
+- localStorage
+- Visual Studio Code
+- Live Server
+- Git
+- GitHub
+- StarUML
+- dbdiagram.io
+- Trello
+- Canva
+
+---
+
+## Funcionalidades Principales
+
+### Cliente
+
+- Visualizar el sitio web informativo.
+- Consultar información del servicio.
+- Revisar los menús disponibles.
+- Registrar una reserva de matrimonio.
+- Ingresar datos personales.
+- Ingresar fecha del evento.
+- Ingresar cantidad total de invitados.
+- Ingresar cantidad de niños.
+- Seleccionar uno de los menús disponibles.
+- Personalizar opciones del menú.
+- Visualizar un comprobante de reserva.
+
+### Administrador
+
+- Acceder al panel administrador.
+- Consultar reservas registradas.
+- Filtrar reservas.
+- Gestionar una reserva.
+- Revisar los datos del evento.
+- Calcular suministros internos.
+- Aprobar o anular una reserva.
+- Generar requerimiento para cocina.
+- Generar requerimiento para parrilla.
+
+### Equipo Operativo
+
+- El jefe de cocina recibe información relacionada con acompañamientos, ensaladas, bebidas, jugos y postres.
+- El maestro parrillero recibe información relacionada con carnes, pollo, cerdo, pescado y cortes seleccionados.
+- El abastecedor puede utilizar los requerimientos para planificar suministros.
+
+---
+
+## Menús Disponibles
+
+El sistema considera cuatro menús principales para matrimonios:
+
+1. **Menú Carne**
+   - Cortes: filete o asiento.
+   - Acompañamiento: arroz, puré o papas doradas.
+   - Ensalada surtida individual.
+   - Copa de vino para adultos.
+   - Bebida o jugo natural.
+   - Postre individual.
+
+2. **Menú Pollo Carne**
+   - Cortes de carne: filete, asiento o lomo liso.
+   - Presa de pollo: pechuga o truto.
+   - Acompañamiento: arroz, puré o papas doradas.
+   - Ensalada surtida individual.
+   - Copa de vino para adultos.
+   - Bebida o jugo natural.
+   - Postre individual.
+
+3. **Menú Cerdo Carne**
+   - Cortes de carne: filete, asiento, lomo liso o lomo vetado.
+   - Corte de cerdo: costillar o porción de pechuga.
+   - Acompañamiento: arroz, puré o papas doradas.
+   - Ensalada surtida individual.
+   - Copa de vino para adultos.
+   - Bebida o jugo natural.
+   - Postre individual.
+
+4. **Menú Marino**
+   - Pescados: reineta, merluza o salmón.
+   - Acompañamiento: arroz, puré o papas doradas.
+   - Ensalada surtida o ensalada chilena individual.
+   - Copa de vino para adultos.
+   - Bebida o jugo natural.
+   - Postre individual.
+
+---
+
+## Motor Lógico de Suministros
+
+El sistema cuenta con un motor lógico implementado en JavaScript que utiliza los datos ingresados en el formulario para calcular los suministros necesarios para el evento.
+
+El cálculo considera:
+
+- Cantidad total de invitados.
+- Cantidad de niños.
+- Cantidad de adultos.
+- Menú seleccionado.
+- Corte de carne, pollo, cerdo o pescado.
+- Acompañamiento seleccionado.
+- Tipo de ensalada.
+- Bebestible seleccionado.
+- Fruta seleccionada para jugo natural.
+
+El cliente no visualiza esta información.  
+El cálculo de suministros está disponible únicamente en el panel administrador.
+
+---
+
+## Separación de Información por Rol
+
+Una de las reglas principales del sistema es separar la información visible para el cliente de la información interna del negocio.
+
+### Información visible para el cliente
+
+- Datos personales.
+- Fecha del matrimonio.
+- Cantidad de invitados.
+- Cantidad de niños.
+- Menú seleccionado.
+- Opciones elegidas.
+- Estado de la reserva.
+- Comprobante de solicitud.
+
+### Información visible solo para administrador
+
+- Kilos de carne.
+- Kilos de pollo, cerdo o pescado.
+- Kilos de arroz o papas.
+- Ingredientes de ensalada.
+- Litros de vino.
+- Litros de bebida.
+- Kilos de fruta para jugo natural.
+- Cantidad de postres.
+- Requerimiento para cocina.
+- Requerimiento para parrilla.
+
+---
+
+## Estructura del Proyecto
 
 ```txt
-el-toldo/
+EL_TOLDO_FINAL_LOCAL/
 │
 ├── index.html
 ├── servicios.html
@@ -46,23 +178,3 @@ el-toldo/
 ├── admin.html
 ├── style.css
 └── README.md
-```
-
-## Casos de uso principales
-
-* CU-001: Registrar solicitud de reserva de asado.
-* CU-002: Visualizar comprobante de reserva.
-* CU-003: Gestionar reservas en panel administrador.
-
-## Estado del proyecto
-
-El proyecto se encuentra en etapa de avance funcional para Sprint Review. Actualmente se encuentran desarrolladas las vistas principales, el formulario de reserva, la conexión con Firestore, el comprobante y una propuesta de panel administrador.
-
-## Mejoras futuras
-
-* Incorporar eliminación segura de reservas.
-* Agregar notificaciones por correo.
-* Implementar calendario de disponibilidad.
-* Exportar reservas a Excel o PDF.
-* Mejorar roles administrativos.
-* Desplegar en hosting productivo.
